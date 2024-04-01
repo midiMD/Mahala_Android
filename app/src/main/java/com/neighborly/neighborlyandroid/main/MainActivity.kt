@@ -10,13 +10,14 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
 import androidx.lifecycle.lifecycleScope
+import com.neighborly.neighborlyandroid.BaseApplication
 import com.neighborly.neighborlyandroid.R
 import com.neighborly.neighborlyandroid.login.ui.LoginActivity
 import com.neighborly.neighborlyandroid.market.MarketActivity
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
-    private val viewModel: MainViewModel by viewModels() { MainViewModel.Factory }
+    private val viewModel: MainViewModel by viewModels{MainViewModel.Factory}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setContentView(R.layout.activity_main)
@@ -28,7 +29,6 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
         lifecycleScope.launch {
             viewModel.uiState.collect { state ->
                 when(state){
@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
         }
 
     private fun showLoading() {
-        TODO("Not yet implemented")
+        Log.d("testLog","Loading")
     }
 
     private fun launchMarketActivity() {

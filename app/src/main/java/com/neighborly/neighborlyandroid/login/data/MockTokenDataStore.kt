@@ -8,32 +8,27 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 
-interface TokenDataStore {
-    suspend fun getToken(): String
-    suspend fun saveToken(token: String)
-    suspend fun clearToken()  // Function to clear the token if needed
-}
+private val mockToken: String = "851da0a9d8f6cc7cd6cf9c94eccadc1e454d2a34"
 
 
-class TokenDataStoreImpl(private val context: Context):TokenDataStore{
+class MockTokenDataStoreImpl(private val context: Context):TokenDataStore{
     companion object {
 
-        val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
+        val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "mockSettings")
     }
     override suspend fun getToken(): String = withContext(Dispatchers.IO){
-        val preferences = context.dataStore.data.first() // Fetch Preferences
-        preferences[PreferencesKeys.TOKEN] ?: "" // Access token with default
+        return@withContext mockToken
     }
 
     override suspend fun saveToken(token: String)  {
-        context.dataStore.edit { settings ->
-            settings[PreferencesKeys.TOKEN] = token
+        context.dataStore.edit { mockSettings ->
+            mockSettings[PreferencesKeys.TOKEN] = token
         }
     }
 
     override suspend  fun clearToken() {
-        context.dataStore.edit { settings ->
-            settings.remove(PreferencesKeys.TOKEN)
+        context.dataStore.edit { mockSettings ->
+            mockSettings.remove(PreferencesKeys.TOKEN)
         }
     }
 

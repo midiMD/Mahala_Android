@@ -4,7 +4,6 @@ package com.neighborly.neighborlyandroid.login.models
 
 
 data class User(
-    val id: Int,
     val full_name: String,
     val email: String,
     val house: House

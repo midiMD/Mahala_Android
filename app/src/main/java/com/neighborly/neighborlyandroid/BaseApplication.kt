@@ -1,19 +1,15 @@
 package com.neighborly.neighborlyandroid
 
 import android.app.Application
-import kotlinx.coroutines.CoroutineScope
+import com.neighborly.neighborlyandroid.common.composition.AppCompositionRoot
 
 
 class BaseApplication : Application() {
-
+    public lateinit var appCompositionRoot: AppCompositionRoot
     override fun onCreate() {
+        appCompositionRoot = AppCompositionRoot(this)
         super.onCreate()
 
-//        tokenRetrievalScope = CoroutineScope(Dispatchers.IO) // Create a custom scope
-//        tokenRetrievalScope?.launch {
-//            token = dataStore.getToken()
-//            // Process the token
-//            tokenRetrievalScope?.cancel()  // Cancel the scope after token retrieval
-//        }
+
     }
 }

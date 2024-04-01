@@ -1,12 +1,17 @@
 package com.neighborly.neighborlyandroid.networking
 
 
+import TokenDataStore
 import com.neighborly.neighborlyandroid.login.models.User
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Response
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 
 class AuthInterceptor(private val token: String?) : Interceptor {
@@ -25,10 +30,16 @@ class AuthInterceptor(private val token: String?) : Interceptor {
 
     }
 }
-class AuthorizedApiServiceImpl(private val token: String) : AuthorizedApiService {
+class AuthorizedApiServiceImpl(private val tokenDataStore: TokenDataStore) : AuthorizedApiService {
 
+    private var token : String
     companion object {
         private const val BASE_URL = "http://10.0.2.2:8000/"
+    }
+    init {
+        runBlocking {
+            token = tokenDataStore.getToken() // Directly assign the result
+        }
     }
 
     private val loggingInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
@@ -38,6 +49,7 @@ class AuthorizedApiServiceImpl(private val token: String) : AuthorizedApiService
         .build()
     private val authorizedRetrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
         .client(authOkHttpClient)
         .build()
     private val authorizedApiService = authorizedRetrofit.create(AuthorizedApiService::class.java)

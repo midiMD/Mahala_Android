@@ -1,13 +1,15 @@
 package com.neighborly.neighborlyandroid.main
 
 import TokenDataStore
+import com.neighborly.neighborlyandroid.BaseApplication
 import com.neighborly.neighborlyandroid.networking.AuthorizedApiService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import android.util.Log
 
 class MainRepository(
-    private val tokenDataStore: TokenDataStore,
-    private val authorizedApiService: AuthorizedApiService // Inject this
+  private val tokenDataStore: TokenDataStore,
+    private val authorizedApiService: AuthorizedApiService
 ) {
 
     suspend fun validateToken(): Boolean {
@@ -20,6 +22,7 @@ class MainRepository(
                     authorizedApiService.getUserInfo().isSuccessful // Check response
                     return@withContext true// Return true if the API call was successful
                 } catch (e: Exception) {
+                    Log.d("myError",e.toString())
                     return@withContext false // Handle API call errors
                 }
             }

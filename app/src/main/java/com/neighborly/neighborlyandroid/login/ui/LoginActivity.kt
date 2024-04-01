@@ -1,6 +1,7 @@
 package com.neighborly.neighborlyandroid.login.ui
 
 import android.content.Context
+import android.content.Intent
 import androidx.lifecycle.Observer
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -17,13 +18,12 @@ import com.google.android.material.snackbar.Snackbar
 import com.neighborly.neighborlyandroid.databinding.ActivityLoginBinding
 
 import com.neighborly.neighborlyandroid.R
+import com.neighborly.neighborlyandroid.market.MarketActivity
 
 class LoginActivity : AppCompatActivity() {
 
-    private val viewModel: LoginViewModel by viewModels()
+    private val viewModel: LoginViewModel by viewModels {LoginViewModel.Factory}
     private lateinit var binding: ActivityLoginBinding
-    val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
-
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -58,11 +58,10 @@ class LoginActivity : AppCompatActivity() {
 
             }
             if(state.authorized) {
-                Log.d("MainActivity", "log in state is authorised")
+                launchMarketActivity()
                 //move to a different activity
             }
             if(state.credentialsDeclined) {
-                Log.d("MainActivity", "log in state is credentialsDenied ")
                 Snackbar.make(binding.root, "Wrong Email or password. try again", Snackbar.LENGTH_SHORT).show()
             }
             if (!state.error.isNullOrEmpty()){
@@ -73,6 +72,12 @@ class LoginActivity : AppCompatActivity() {
 
         // Observe the LiveData, passing in this activity as the LifecycleOwner and the observer.
         viewModel.loginState.observe(this, loginStateObserver)
+
+    }
+    private fun launchMarketActivity() {
+        val intent = Intent(this, MarketActivity::class.java)
+        startActivity(intent)
+        finish() // Destroy MainActivity
 
     }
 }
