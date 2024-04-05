@@ -1,5 +1,7 @@
 package com.neighborly.neighborlyandroid.login.models
 
+import com.neighborly.neighborlyandroid.common.models.User
+
 data class LoginRequest(
     val email: String,
     val password: String

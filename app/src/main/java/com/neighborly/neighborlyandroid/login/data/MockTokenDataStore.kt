@@ -8,7 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 
-private val mockToken: String = "851da0a9d8f6cc7cd6cf9c94eccadc1e454d2a34"
+private val mockToken: String = ""
 
 
 class MockTokenDataStoreImpl(private val context: Context):TokenDataStore{

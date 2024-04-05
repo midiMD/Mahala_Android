@@ -1,4 +1,4 @@
-package com.neighborly.neighborlyandroid.login.models
+package com.neighborly.neighborlyandroid.common.models
 
 // Successful Login
 

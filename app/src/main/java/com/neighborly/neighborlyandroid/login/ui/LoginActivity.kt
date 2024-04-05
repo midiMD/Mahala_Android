@@ -1,6 +1,5 @@
 package com.neighborly.neighborlyandroid.login.ui
 
-import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.Observer
 import android.os.Bundle
@@ -11,15 +10,16 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
+
 import com.google.android.material.snackbar.Snackbar
 import com.neighborly.neighborlyandroid.databinding.ActivityLoginBinding
 
 import com.neighborly.neighborlyandroid.R
 import com.neighborly.neighborlyandroid.market.MarketActivity
+import com.neighborly.neighborlyandroid.registration.ui.RegisterActivity
 
+//TO DO:
+// Implement Forgot Password
 class LoginActivity : AppCompatActivity() {
 
     private val viewModel: LoginViewModel by viewModels {LoginViewModel.Factory}
@@ -30,7 +30,7 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         enableEdgeToEdge()
         setContentView(binding.root)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.login)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
@@ -43,6 +43,10 @@ class LoginActivity : AppCompatActivity() {
             }
 
         }
+        val registerButtonListener = View.OnClickListener {
+            viewModel.onRegisterButtonPress()
+        }
+        binding.registerButton.setOnClickListener(registerButtonListener)
         binding.loginButton.setOnClickListener(loginButtonListener)
 
         val loginStateObserver = Observer<LoginViewModel.LoginState> { state ->
@@ -61,12 +65,15 @@ class LoginActivity : AppCompatActivity() {
                 launchMarketActivity()
                 //move to a different activity
             }
-            if(state.credentialsDeclined) {
+            else if(state.credentialsDeclined) {
                 Snackbar.make(binding.root, "Wrong Email or password. try again", Snackbar.LENGTH_SHORT).show()
             }
-            if (!state.error.isNullOrEmpty()){
+            else if (!state.error.isNullOrEmpty()){
                 Log.d("MainActivity", state.error)
 
+            }
+            if(state.goToRegister){
+                launchRegisterActivity()
             }
         }
 
@@ -77,7 +84,13 @@ class LoginActivity : AppCompatActivity() {
     private fun launchMarketActivity() {
         val intent = Intent(this, MarketActivity::class.java)
         startActivity(intent)
-        finish() // Destroy MainActivity
+        finish() // Destroy LoginActivity
+
+    }
+    private fun launchRegisterActivity() {
+        val intent = Intent(this, RegisterActivity::class.java)
+        startActivity(intent)
+        finish() // Destroy LoginActivity
 
     }
 }

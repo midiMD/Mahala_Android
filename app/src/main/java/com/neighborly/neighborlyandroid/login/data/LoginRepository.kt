@@ -3,12 +3,12 @@ package com.neighborly.neighborlyandroid.login.data
 import android.util.Log
 import com.neighborly.neighborlyandroid.BaseApplication
 import com.neighborly.neighborlyandroid.login.models.LoginRequest
-import com.neighborly.neighborlyandroid.networking.ApiService
+import com.neighborly.neighborlyandroid.common.networking.UnAuthApiService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 
-class LoginRepository(private val apiService: ApiService) {
+class LoginRepository(private val apiService: UnAuthApiService) {
     suspend fun makeLoginRequest(requestBody: LoginRequest): Boolean = withContext(Dispatchers.IO){
         //Network and local storage IO operations should be done in IO Context
         var isAuth: Boolean = false

@@ -30,7 +30,8 @@ class LoginViewModel(private val loginRepository:LoginRepository,
         val loading:Boolean = false,
         val authorized:Boolean = false,
         val credentialsDeclined:Boolean = false,
-        val error:String? =null
+        val error:String? =null,
+        val goToRegister:Boolean= false,
     )
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
@@ -57,6 +58,10 @@ class LoginViewModel(private val loginRepository:LoginRepository,
                 loginState.value= LoginState(credentialsDeclined = true)
             }
         }
+
+    }
+    fun onRegisterButtonPress() {
+        loginState.value= LoginState(goToRegister = true)
 
     }
 

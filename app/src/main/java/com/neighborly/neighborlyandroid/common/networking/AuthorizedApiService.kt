@@ -1,10 +1,8 @@
-package com.neighborly.neighborlyandroid.networking
+package com.neighborly.neighborlyandroid.common.networking
 
 
 import TokenDataStore
-import com.neighborly.neighborlyandroid.login.models.User
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import com.neighborly.neighborlyandroid.common.models.User
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient

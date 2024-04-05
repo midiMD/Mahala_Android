@@ -2,7 +2,7 @@ package com.neighborly.neighborlyandroid.main
 
 import TokenDataStore
 import com.neighborly.neighborlyandroid.BaseApplication
-import com.neighborly.neighborlyandroid.networking.AuthorizedApiService
+import com.neighborly.neighborlyandroid.common.networking.AuthorizedApiService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import android.util.Log

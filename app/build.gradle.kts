@@ -43,9 +43,12 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0") // convert json to a Kotlin object
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")//logging
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")//logging api calls
     implementation("androidx.datastore:datastore-preferences:1.0.0") // datastore
-    implementation("com.google.dagger:hilt-android:2.51") // Hilt-dagger DI
+    implementation("com.google.dagger:hilt-android:2.51")
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.androidx.legacy.support.v4) // Hilt-dagger DI
     annotationProcessor("com.google.dagger:hilt-compiler:2.51")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
