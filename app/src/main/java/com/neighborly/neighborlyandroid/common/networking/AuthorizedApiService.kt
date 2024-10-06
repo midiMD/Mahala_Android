@@ -13,6 +13,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 
 class AuthInterceptor(private val token: String?) : Interceptor {
+    // Appends the auth token to a request if the token exists in DataStore
 
     override fun intercept(chain: Interceptor.Chain): okhttp3.Response{
         // if token="" that means there is no token in the dataStore
@@ -35,6 +36,7 @@ class AuthorizedApiServiceImpl(private val tokenDataStore: TokenDataStore) : Aut
         private const val BASE_URL = "http://10.0.2.2:8000/"
     }
     init {
+        // get the token from the datastore
         runBlocking {
             token = tokenDataStore.getToken() // Directly assign the result
         }

@@ -14,8 +14,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.neighborly.neighborlyandroid.R
 import com.neighborly.neighborlyandroid.databinding.ActivityRegisterBinding
 import com.neighborly.neighborlyandroid.login.ui.LoginActivity
-import com.neighborly.neighborlyandroid.login.ui.LoginViewModel
-import com.neighborly.neighborlyandroid.market.MarketActivity
+import com.neighborly.neighborlyandroid.market.ui.MarketActivity
 
 //TODO
 // Make UI more ergonomic

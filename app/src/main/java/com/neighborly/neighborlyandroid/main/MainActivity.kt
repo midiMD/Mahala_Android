@@ -10,10 +10,9 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
 import androidx.lifecycle.lifecycleScope
-import com.neighborly.neighborlyandroid.BaseApplication
 import com.neighborly.neighborlyandroid.R
 import com.neighborly.neighborlyandroid.login.ui.LoginActivity
-import com.neighborly.neighborlyandroid.market.MarketActivity
+import com.neighborly.neighborlyandroid.market.ui.MarketActivity
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {

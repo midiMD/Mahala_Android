@@ -1,4 +1,4 @@
-package com.neighborly.neighborlyandroid.market
+package com.neighborly.neighborlyandroid.market.ui
 
 import android.os.Bundle
 import com.google.android.material.appbar.CollapsingToolbarLayout

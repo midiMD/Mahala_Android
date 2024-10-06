@@ -10,6 +10,7 @@ import com.neighborly.neighborlyandroid.common.networking.AuthorizedApiService
 import com.neighborly.neighborlyandroid.common.networking.AuthorizedApiServiceImpl
 import com.neighborly.neighborlyandroid.common.networking.UnAuthApiService
 import com.neighborly.neighborlyandroid.common.networking.UnAuthApiServiceImpl
+import com.neighborly.neighborlyandroid.market.data.MarketRepository
 import com.neighborly.neighborlyandroid.registration.data.RegisterRepository
 
 class AppCompositionRoot(applicationContext:Context) {
@@ -21,6 +22,6 @@ class AppCompositionRoot(applicationContext:Context) {
     public val mainRepository:MainRepository = MainRepository(tokenDataStore = tokenStore, authorizedApiService = authorizedApiService)
     public val loginRepository:LoginRepository get() = LoginRepository(apiService = unauthorizedApiService)
     public val registerRepository: RegisterRepository get() = RegisterRepository(apiService = unauthorizedApiService)
-
+    public val marketRepository: MarketRepository get() = MarketRepository(apiService = authorizedApiService)
 
 }

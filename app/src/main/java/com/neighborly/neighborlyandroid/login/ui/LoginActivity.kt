@@ -15,7 +15,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.neighborly.neighborlyandroid.databinding.ActivityLoginBinding
 
 import com.neighborly.neighborlyandroid.R
-import com.neighborly.neighborlyandroid.market.MarketActivity
+import com.neighborly.neighborlyandroid.market.ui.MarketActivity
 import com.neighborly.neighborlyandroid.registration.ui.RegisterActivity
 
 //TO DO:
