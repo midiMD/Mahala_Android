@@ -2,7 +2,7 @@ package com.neighborly.neighborlyandroid.market.models
 
 data class MarketSearchRequest(
     val searchString: String,
-    val category: Int
+    val categoriesList: List<Int>
 ){
     init {
         require(category >= 0 && category< ItemCategoriesList.size) {
@@ -28,7 +28,7 @@ data class Item(
     val ownerName: String,
     val dayCharge: Double,
     val category: Int,
-    val thumbnail
+    val thumbnail:String
 ) {
     init {
         require(category >= 0 && category< ItemCategoriesList.size) {

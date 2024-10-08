@@ -13,14 +13,13 @@ class MarketRepository(private val apiService: AuthorizedApiService) {
         //Network and local storage IO operations should be done in IO Context
         var isAuth: Boolean = false
         try {
-            val response = apiService.login(requestBody)
+            val response = apiService.requestMarketItems(requestBody)
             when (response.code()){
                 200 -> isAuth = true
                 404 -> isAuth=false
             }
 
-            response.body()?.data?.let { Log.d("token", it.Token) }
-
+            Log.d("Market Items response", response.body()?.data.toString())
         }catch (e:Exception){
             e.message?.let { Log.d("LoginViewModelError", it) }
         }

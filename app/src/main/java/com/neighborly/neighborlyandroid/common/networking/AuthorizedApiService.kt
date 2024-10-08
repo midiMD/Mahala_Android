@@ -2,7 +2,12 @@ package com.neighborly.neighborlyandroid.common.networking
 
 
 import TokenDataStore
+import android.util.Log
 import com.neighborly.neighborlyandroid.common.models.User
+import com.neighborly.neighborlyandroid.market.models.MarketSearchRequest
+import com.neighborly.neighborlyandroid.market.models.MarketSearchResponse
+import com.neighborly.neighborlyandroid.registration.models.UserRegisterApiRequest
+import com.neighborly.neighborlyandroid.registration.models.UserRegisterApiResponse
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -10,7 +15,9 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Query
 
 class AuthInterceptor(private val token: String?) : Interceptor {
     // Appends the auth token to a request if the token exists in DataStore
@@ -58,9 +65,21 @@ class AuthorizedApiServiceImpl(private val tokenDataStore: TokenDataStore) : Aut
     override suspend fun getUserInfo(): Response<User> {
         return authorizedApiService.getUserInfo()
     }
+    @GET("/market/")
+    override suspend fun requestMarketItems(@Query("searchQuery") request: MarketSearchRequest): Response<MarketSearchResponse> {
+        val response = authorizedApiService.requestMarketItems(request)
+
+        if (response.isSuccessful) {
+            Log.i("Market","requested market items succesful")
+        }
+        return response
+    }
+
 }
 interface AuthorizedApiService{
 
     @GET("/main/")
     suspend fun getUserInfo(): Response<User>
+    @GET("/market/")
+    suspend fun requestMarketItems(@Query("searchQuery") request:MarketSearchRequest):Response<MarketSearchResponse>
 }

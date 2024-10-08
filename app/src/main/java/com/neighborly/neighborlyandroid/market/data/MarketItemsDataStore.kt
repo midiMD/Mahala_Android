@@ -17,7 +17,7 @@ interface MarketItemsDataStore {
 }
 
 
-class (private val context: Context):TokenDataStore{
+class MarketItemsDataStoreImpl (private val context: Context):MarketItemsDataStore{
     companion object {
 
         val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
