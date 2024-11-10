@@ -62,7 +62,9 @@ class UnAuthApiServiceImpl(
         val response: Response<LoginResponse> = apiService.login(request)
         // it deals with storage of token in TokenDataStore
         if (response.isSuccessful) {
-            response.body()?.data?.let { tokenDataStore.saveToken(it.Token) }
+            val token:String = response.body()?.data?.Token ?: ""
+            tokenDataStore.saveToken(token)
+            Log.i("logs","Login Succesful, auth token stored : "+token)
         }
         return response
     }

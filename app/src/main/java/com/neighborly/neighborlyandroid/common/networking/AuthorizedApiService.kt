@@ -46,6 +46,7 @@ class AuthorizedApiServiceImpl(private val tokenDataStore: TokenDataStore) : Aut
         // get the token from the datastore
         runBlocking {
             token = tokenDataStore.getToken() // Directly assign the result
+            Log.i("logs","Auth Token: "+token)
         }
     }
 
@@ -70,7 +71,7 @@ class AuthorizedApiServiceImpl(private val tokenDataStore: TokenDataStore) : Aut
         val response = authorizedApiService.requestMarketItems(request)
 
         if (response.isSuccessful) {
-            Log.i("Market","requested market items succesful")
+            Log.i("Logs","Market items requested succesfully")
         }
         return response
     }

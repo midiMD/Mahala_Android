@@ -1,38 +1,31 @@
 package com.neighborly.neighborlyandroid.market.models
 
+import com.neighborly.neighborlyandroid.common.models.Category
+
 data class MarketSearchRequest(
     val searchString: String,
-    val categoriesList: List<Int>
+    val categoriesList: List<Int>  // Id of the categories
 ){
-    init {
-        require(category >= 0 && category< ItemCategoriesList.size) {
-            "Invalid category index. Must be between 0 and ${ItemCategoriesList.size - 1}."
-        }
-    }
+
 }
 data class MarketSearchResponse(
-    val data: List<Item> = emptyList()
+    val data: List<MarketItem> = emptyList()
 )
-data class MarketItem(
-    val distance: Int,
-    val item: Item, // Note: Capitalizing property name to match JSON
 
+data class MarketResponseState(
+    val data:List<MarketItem>? = emptyList(),
+    var isSuccess:Boolean = false,
+    val error: String? = null
 )
 // we will represent a category as an int `c` s.t. the name of the category is ItemCategoriesList[`c`]
-val ItemCategoriesList: List<String> = listOf("DIY", "Entertainment", "Garden", "Cleaning")
 
-
-data class Item(
-    val id:Int,
-    val name: String,
+// for an item displayed in market view
+data class MarketItem(
+    val id:Long,
+    val title: String,
     val ownerName: String,
     val dayCharge: Double,
-    val category: Int,
-    val thumbnail:String
-) {
-    init {
-        require(category >= 0 && category< ItemCategoriesList.size) {
-            "Invalid category index. Must be between 0 and ${ItemCategoriesList.size - 1}."
-        }
-    }
-}
+    val category: Category,
+    val thumbnailUrl:String,
+    val distance:Double
+)
