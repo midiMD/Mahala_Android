@@ -65,7 +65,7 @@ class MarketActivity : ComponentActivity() {
                     BottomNavigationItem("Settings", selectedIcon = Icons.Filled.Settings, unselectedIcon = Icons.Outlined.Settings, hasNews = false)
                 )
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier,
                     color = MaterialTheme.colorScheme.background
                 ) {
                     Scaffold(

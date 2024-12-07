@@ -1,20 +1,25 @@
 package com.neighborly.neighborlyandroid.market.ui
 
+import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.DropdownMenuItem
@@ -39,7 +44,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.focus.onFocusEvent
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
@@ -49,43 +58,42 @@ import com.neighborly.neighborlyandroid.common.models.Category
 import com.neighborly.neighborlyandroid.common.models.SortBy
 
 
+//@OptIn(ExperimentalMaterial3Api::class)
+//@Preview
+//@Composable
+//fun MarketSearchBarPreview() {
+//    MarketSearchBar(modifier = Modifier, onSearchButtonPress = {search -> Log.i("logs",search)})
+//}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MarketTopBar(modifier: Modifier=Modifier, onSearch:(String)->Unit,
-                 categoryState:List<CategoryOption>,
-                 onToggleCategories:(category:Category, value:Boolean)-> Unit,
-                 onToggleSortByOptions:(option: SortBy, value:Boolean)->Unit,
-                 activeSortBy: SortBy,sortByOptions:List<SortBy>){
-    var isVisibleCategoryAndSortByBar by remember { mutableStateOf(true) }
-    Column {
-        MarketSearchBar(modifier = modifier, onSearchButtonPress = onSearch,
-            toggleCategoryAndSortByVisibility = {value->isVisibleCategoryAndSortByBar = value})
-        if (isVisibleCategoryAndSortByBar){
-            CategoriesAndSortByBar(modifier = modifier, categoryState=categoryState,
-                onToggleCategories = onToggleCategories,
-                onToggleSortByOptions = onToggleSortByOptions,
-                activeSortBy = activeSortBy,
-                sortByOptions = sortByOptions)
-        }
+fun MarketSearchBar(modifier:Modifier,onSearchButtonPress:(String)->Unit,
+                    toggleCategoryAndSortByVisibility:(Boolean)->Unit) {
+    val textFieldState = rememberTextFieldState()
+    var expanded = false
+    val keyboardController = LocalSoftwareKeyboardController.current
+    //Box(Modifier.fillMaxSize().semantics { isTraversalGroup = false }) {
+        SearchBar(
+//            modifier = Modifier.align(Alignment.TopCenter).semantics { traversalIndex = 0f },
 
+            inputField = {
+                SearchBarDefaults.InputField(
+                    state = textFieldState,
+                    onSearch = { expanded = false
+                                keyboardController?.hide()
+                                onSearchButtonPress(textFieldState.text.toString())
+                    },
 
-
-    }
-
+                    expanded = expanded,
+                    onExpandedChange = { expanded = it },
+                    placeholder = { Text("Search Market") },
+                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                    //trailingIcon = { Icon(Icons.Default.MoreVert, contentDescription = null) },
+                )
+            },
+            expanded = expanded,
+            onExpandedChange = { expanded = it }
+        ){}
 
 }
-@Composable
-fun CategoriesAndSortByBar(modifier: Modifier, categoryState:List<CategoryOption>,onToggleCategories: (category: Category, value: Boolean) -> Unit, onToggleSortByOptions: (option: SortBy, value: Boolean) -> Unit,activeSortBy: SortBy,sortByOptions: List<SortBy>){
-    Row(verticalAlignment = Alignment.CenterVertically,modifier = Modifier.fillMaxWidth()) {
-        CategoriesDropdown(
-            options = categoryState, onOptionToggled = onToggleCategories, modifier = Modifier
-                .width(LocalConfiguration.current.screenWidthDp.dp / 2)  // Half screen width
-        )
-        SortByDropdown(
-            onOptionToggled = onToggleSortByOptions,
-            activeOption = activeSortBy,
-            labelText = "Sort By",
-            options = sortByOptions
-        )
-    }
-}
-

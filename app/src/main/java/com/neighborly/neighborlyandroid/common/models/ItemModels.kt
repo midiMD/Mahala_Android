@@ -8,19 +8,16 @@ enum class Category(val id: Int, val text: String) {
     TOYS(5, "Toys"),
     SPORTS_AND_OUTDOORS(6, "Sports & Outdoors"),
     HOME_AND_GARDEN(7, "Home & Garden"),
-    VEHICLES(8, "Vehicles"),
-    REAL_ESTATE(9, "Real Estate"),
-    PETS(10, "Pets"),
-    MUSIC_INSTRUMENTS(11, "Musical Instruments"),
-    OFFICE_SUPPLIES(12, "Office Supplies"),
-    BABY_PRODUCTS(13, "Baby Products"),
-    BEAUTY_AND_PERSONAL_CARE(14, "Beauty & Personal Care"),
-    HEALTH_AND_WELLNESS(15, "Health & Wellness"),
-    ART_AND_COLLECTIBLES(16, "Art & Collectibles"),
-    SERVICES(17, "Services"),
-    TICKETS(18, "Tickets"),
-    TOOLS_AND_EQUIPMENT(19, "Tools & Equipment"),
-    APPLIANCES(20, "Appliances");
+    PETS(8, "Pets"),
+    MUSIC_INSTRUMENTS(9, "Musical Instruments"),
+    OFFICE_SUPPLIES(10, "Office Supplies"),
+    BABY_PRODUCTS(11, "Baby Products"),
+    BEAUTY_AND_PERSONAL_CARE(12, "Beauty & Personal Care"),
+    HEALTH_AND_WELLNESS(13, "Health & Wellness"),
+    ART_AND_COLLECTIBLES(14, "Art & Collectibles"),
+    SERVICES(15, "Services"),
+    TOOLS_AND_EQUIPMENT(16, "Tools & Equipment"),
+    APPLIANCES(17, "Appliances");
 
     companion object {
         // Helper function to find a category by ID

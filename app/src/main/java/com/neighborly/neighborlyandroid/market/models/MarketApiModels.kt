@@ -1,9 +1,10 @@
 package com.neighborly.neighborlyandroid.market.models
 
+import com.google.gson.annotations.SerializedName
 import com.neighborly.neighborlyandroid.common.models.Category
 
 data class MarketSearchRequest(
-    val searchString: String,
+    val searchQuery: String,
     val categoriesList: List<Int>  // Id of the categories
 ){
 
@@ -23,9 +24,9 @@ data class MarketResponseState(
 data class MarketItem(
     val id:Long,
     val title: String,
-    val ownerName: String,
-    val dayCharge: Double,
+    @SerializedName("owner_name") val ownerName: String,
+    @SerializedName("price_per_day") val dayCharge: Double,
     val category: Category,
-    val thumbnailUrl:String,
+    @SerializedName("image_url") val thumbnailUrl:String,
     val distance:Double
 )

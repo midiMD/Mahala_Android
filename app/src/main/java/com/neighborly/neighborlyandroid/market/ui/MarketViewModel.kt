@@ -108,7 +108,7 @@ class MarketViewModel(private val marketRepository: MarketRepository,
 
     }
     fun toggleSortByOption(option:SortBy, value:Boolean){
-        if (value == false){
+        if (!value){
             if (option == _activeSortBy.value){
             _activeSortBy.value = SortBy.NOTHING}
         }else{
@@ -123,27 +123,19 @@ class MarketViewModel(private val marketRepository: MarketRepository,
             _itemSectionUiState.value = _itemSectionUiState.value.copy(isLoading = true)
             var activeCategoryIdList:List<Int> = _categoryState.value.filter{ it.isActive }.map{it.category.id}
             val requestBody = MarketSearchRequest(query, activeCategoryIdList)
+            Log.i("logs", requestBody.toString())
             //val responseState: MarketResponseState
 
-            runBlocking {
-                var responseState:Deferred<MarketResponseState> = async {marketRepository.requestMarketItems(requestBody = requestBody)}
+            viewModelScope.launch {
+                val responseState:Deferred<MarketResponseState> = async {marketRepository.requestMarketItems(requestBody = requestBody)}
                 processResponse(responseState)
             }
 
-//            viewModelScope.launch {
-//
-//            }
+
+
+
         }
 
-
-//        viewModelScope.launch{
-//            val isAuthorized : Boolean = loginRepository.makeLoginRequest(requestBody)
-//            if (isAuthorized){
-//                loginState.value= LoginState(authorized = true)
-//            }else{
-//                loginState.value= LoginState(credentialsDeclined = true)
-//            }
-//        }
 
     }
     suspend fun processResponse(marketResponseState: Deferred<MarketResponseState>) {

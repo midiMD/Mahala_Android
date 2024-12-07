@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 
 interface TokenDataStore {
-    suspend fun getToken(): String
+    suspend fun getToken(): String?
     suspend fun saveToken(token: String)
     suspend fun clearToken()  // Function to clear the token if needed
 }
@@ -21,20 +21,21 @@ class TokenDataStoreImpl(private val context: Context):TokenDataStore{
 
         val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
     }
-    override suspend fun getToken(): String = withContext(Dispatchers.IO){
+    override suspend fun getToken(): String? = withContext(Dispatchers.IO){
         val preferences = context.dataStore.data.first() // Fetch Preferences
         val token = preferences[PreferencesKeys.TOKEN]
         if (token.isNullOrEmpty()){
             Log.i("logs","Token in datastore is empty or null")
         }
         Log.i("logs","Getting token from datastore: "+ token)
-        token.toString() // Access token with default
+        token // Access token with default
     }
 
     override suspend fun saveToken(token: String)  {
+        Log.i("logs", "Auth token saved in datastore: $token")
+
         context.dataStore.edit { settings ->
             settings[PreferencesKeys.TOKEN] = token
-            Log.i("logs", "Auth token saved in datastore: $token")
         }
     }
 

@@ -34,12 +34,13 @@ class MainViewModel(private val repository: MainRepository,
         }
     }
     init {
-        Log.d("MainViewModel","adsasd")
+        Log.d("logs","MainViewModel is being initialised")
         viewModelScope.launch{
             if (repository.validateToken()) {
+                Log.d("logs","MainViewModel: auth token validated. Launching Market Activity")
                 _uiState.value = UiState.LaunchMarket
             } else {
-                Log.d("logger","launching login")
+                Log.d("logs","launching login")
                 _uiState.value = UiState.LaunchLogin
             }
         }

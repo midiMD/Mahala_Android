@@ -3,7 +3,7 @@ import android.util.Log
 import com.google.gson.Gson
 import com.neighborly.neighborlyandroid.common.models.House
 import com.neighborly.neighborlyandroid.common.models.User
-import com.neighborly.neighborlyandroid.common.networking.UnAuthApiService
+import com.neighborly.neighborlyandroid.common.networking.LoginService
 import com.neighborly.neighborlyandroid.registration.models.UserRegisterApiRequest
 import com.neighborly.neighborlyandroid.registration.models.UserRegisterApiResponse
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +16,7 @@ data class UserRegisterApiResponseState(
 
 )
 
-class RegisterRepository(private val apiService: UnAuthApiService) {
+class RegisterRepository(private val apiService: LoginService) {
     suspend fun makeRegisterRequest(email:String, password:String, fullName: String): UserRegisterApiResponseState = withContext(Dispatchers.IO){
         //Network and local storage IO operations should be done in IO Context
         val requestBody = UserRegisterApiRequest(email,password,fullName)
