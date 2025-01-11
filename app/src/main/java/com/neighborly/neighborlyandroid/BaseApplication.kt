@@ -5,7 +5,7 @@ import com.neighborly.neighborlyandroid.common.composition.AppCompositionRoot
 
 
 class BaseApplication : Application() {
-    public lateinit var appCompositionRoot: AppCompositionRoot
+    lateinit var appCompositionRoot: AppCompositionRoot
     override fun onCreate() {
         appCompositionRoot = AppCompositionRoot(this)
         super.onCreate()
