@@ -3,6 +3,7 @@ package com.neighborly.neighborlyandroid.ui.market.components
 
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +30,7 @@ import androidx.compose.ui.unit.dp
 
 import com.neighborly.neighborlyandroid.domain.model.Category
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.ui.tooling.preview.Preview
 
 import com.neighborly.neighborlyandroid.domain.model.MarketItem
 import com.neighborly.neighborlyandroid.ui.common.image.BrokenItemImage
@@ -36,7 +38,7 @@ import com.neighborly.neighborlyandroid.ui.common.image.ItemImage
 
 @Composable
 fun MarketItemsSection(modifier: Modifier=Modifier, itemsState: List<MarketItem>, onClickItem: (item: MarketItem) -> Unit){
-    Surface(color = Color.LightGray,  ) {
+    Surface(color = MaterialTheme.colorScheme.background,  ) {
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),  // Set 2 items per row
@@ -81,7 +83,7 @@ fun ItemCard(item: MarketItem, onClick:(item:MarketItem)->Unit,modifier:Modifier
     OutlinedCard(
         onClick = {onClick(item)} ,
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
         ),
         border = BorderStroke(1.dp, Color.Black),
         modifier = Modifier.padding(1.dp).size(100.dp,250.dp)
@@ -102,21 +104,6 @@ fun ItemCard(item: MarketItem, onClick:(item:MarketItem)->Unit,modifier:Modifier
                     )
 
                 }
-//                val imageLoader = LocalContext.current.imageLoader.newBuilder()
-//                    .logger(DebugLogger())
-//                    .build()
-//                AsyncImage(
-//                    model  = ImageRequest.Builder(LocalContext.current)
-//                        .data(item.thumbnailUrl.replace("127.0.0.1", "10.0.2.2")) // 127.0.0.1 refers to the emulator itself, 10.0.2.2 refers to the device that's running android studio
-//                        .crossfade(true)
-//                        .build(),
-//                    contentDescription = item.toString(),
-//                    error =painterResource(R.drawable.ic_broken_img),
-//                    placeholder = painterResource(R.drawable.loading_image),
-//                    contentScale = ContentScale.Fit,
-//                    imageLoader = imageLoader,
-//                    modifier = Modifier.align(Alignment.CenterHorizontally).fillMaxWidth().weight(1f)
-//                )
             }else{
                 BrokenItemImage()
             }
@@ -144,8 +131,8 @@ val mockItems = List(10) { id ->
 //fun PreviewItemCard(){
 //    ItemCard(item = mockItems[0])
 //}
-//@Composable
-//@Preview
-//fun PreviewItemsSection(){
-//    MarketItemsSection(itemsState = mockItems)
-//}
+@Composable
+@Preview
+fun PreviewItemsSection(){
+    MarketItemsSection(itemsState = mockItems, onClickItem = {})
+}

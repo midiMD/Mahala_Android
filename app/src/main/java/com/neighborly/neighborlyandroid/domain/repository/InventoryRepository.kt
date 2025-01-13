@@ -1,9 +1,11 @@
 package com.neighborly.neighborlyandroid.domain.repository
 
-import com.neighborly.neighborlyandroid.data.network.retrofit.InventoryService
+import com.neighborly.neighborlyandroid.common.Resource
+import com.neighborly.neighborlyandroid.domain.model.InventoryItem
+import com.neighborly.neighborlyandroid.domain.model.InventoryItemDetail
 
 
-class InventoryRepository(private val inventoryService: InventoryService) {
-
-
+interface InventoryRepository {
+    suspend fun getItemDetail(itemId: Long) : Resource<InventoryItemDetail>
+    suspend fun getInventoryItems():Resource<List<InventoryItem>>
 }

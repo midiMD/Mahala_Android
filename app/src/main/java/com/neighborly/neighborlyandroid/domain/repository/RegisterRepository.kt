@@ -1,50 +1,8 @@
 package com.neighborly.neighborlyandroid.domain.repository
-import android.util.Log
-import com.google.gson.Gson
+
 import com.neighborly.neighborlyandroid.common.RegisterResponseState
-import com.neighborly.neighborlyandroid.data.network.dto.ApiErrorResponse
-import com.neighborly.neighborlyandroid.data.network.dto.authentication.RegisterRequest
-import com.neighborly.neighborlyandroid.data.network.retrofit.LoginService
 import com.neighborly.neighborlyandroid.domain.model.RegistrationDetails
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-
-
-
-class RegisterRepository(private val apiService: LoginService) {
-    suspend fun register(details: RegistrationDetails): RegisterResponseState = withContext(Dispatchers.IO){
-        //Network and local storage IO operations should be done in IO Context
-        //var userRegisterApiResponseState: RegisterApiResponseState = RegisterApiResponseState()
-        try {
-            val registerRequestData: RegisterRequest = RegisterRequest.from(details)
-            val response = apiService.register(registerRequestData)
-
-            if(response.isSuccessful){
-                RegisterResponseState.Success
-
-            } else if (response.code() == 500){
-                //internal server error
-                RegisterResponseState.Error.ServerError
-            } else {
-                val apiError = Gson().fromJson(
-                    response.errorBody()!!.string(),
-                    ApiErrorResponse::class.java
-                )
-
-                if (apiError.errors[0].code=="unique" && apiError.errors[0].attr=="email"){
-                    RegisterResponseState.Error.EmailExists
-                }else{
-                    RegisterResponseState.Error.ServerError
-
-                }
-            }
-
-        }catch (e:Exception){
-            e.message?.let { Log.d("RegisterRepositoryError", it) }
-            RegisterResponseState.Error.ClientError
-
-        }
-
-    }
+interface RegisterRepository {
+    suspend fun register(details: RegistrationDetails): RegisterResponseState
 }

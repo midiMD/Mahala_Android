@@ -1,4 +1,4 @@
-package com.neighborly.neighborlyandroid.domain.repository
+package com.neighborly.neighborlyandroid.data.repository
 
 import android.util.Log
 import coil3.network.HttpException
@@ -11,6 +11,7 @@ import com.neighborly.neighborlyandroid.data.network.retrofit.MarketApi
 import com.neighborly.neighborlyandroid.domain.model.MarketItem
 import com.neighborly.neighborlyandroid.domain.model.MarketItemDetail
 import com.neighborly.neighborlyandroid.domain.model.MarketQuery
+import com.neighborly.neighborlyandroid.domain.repository.MarketRepository
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

@@ -117,10 +117,6 @@ class MarketViewModel(private val marketRepository: MarketRepository,
 
     }
 
-    fun toggleIdleDetailScreen() {
-        _detailScreenState.value= MarketItemDetailScreenState.Idle
-    }
-
 
 }
 

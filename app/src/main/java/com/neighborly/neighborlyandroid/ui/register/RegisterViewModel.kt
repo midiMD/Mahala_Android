@@ -13,7 +13,7 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import com.neighborly.neighborlyandroid.common.RegisterResponseState
 
 import com.neighborly.neighborlyandroid.domain.model.RegistrationDetails
-import com.neighborly.neighborlyandroid.domain.repository.RegisterRepository
+import com.neighborly.neighborlyandroid.data.repository.RegisterRepositoryImpl
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -59,7 +59,7 @@ fun validateDetailsLocally(details: RegistrationDetails): RegistrationScreenStat
     // If all checks pass, return null
     return null
 }
-class RegisterViewModel(private val registerRepository: RegisterRepository,
+class RegisterViewModel(private val registerRepository: RegisterRepositoryImpl,
                         private val savedStateHandle: SavedStateHandle
 ): ViewModel()  {
 

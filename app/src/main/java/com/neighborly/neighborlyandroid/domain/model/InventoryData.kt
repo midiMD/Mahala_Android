@@ -17,5 +17,5 @@ data class InventoryItem(
 )
 
 data class InventoryItemDetail(
-    val description: String?
+    val description: String? = null
 )

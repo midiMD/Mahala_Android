@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
@@ -96,7 +97,7 @@ private fun MarketListScreen(
         )
         when (uiState){
             is MarketScreenState.Error -> {
-                MarketItemsSection(modifier = Modifier.background(color = Color.Cyan), itemsState = itemsState, onClickItem = {navigateToMarketItemDetail(it)})
+                MarketItemsSection(modifier = Modifier.background(color = MaterialTheme.colorScheme.background), itemsState = itemsState, onClickItem = {navigateToMarketItemDetail(it)})
                 LaunchedEffect(uiState) {
                     snackbarHostState.showSnackbar(uiState.message)
                 }
@@ -112,7 +113,7 @@ private fun MarketListScreen(
             }
             MarketScreenState.Idle,
             MarketScreenState.Success -> {
-                MarketItemsSection(modifier = Modifier.background(color = Color.Cyan), itemsState = itemsState, onClickItem = {navigateToMarketItemDetail(it)})
+                MarketItemsSection(modifier = Modifier.background(color = MaterialTheme.colorScheme.background), itemsState = itemsState, onClickItem = {navigateToMarketItemDetail(it)})
 
             }
         }
@@ -123,7 +124,8 @@ private fun MarketListScreen(
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun MarketScreen(modifier: Modifier = Modifier,
-                 marketViewModel: MarketViewModel = viewModel(factory = MarketViewModel.Factory)) {
+                 marketViewModel: MarketViewModel = viewModel(factory = MarketViewModel.Factory),
+                 navigateToChat:()->Unit) {
     val itemsState by marketViewModel.itemsState.collectAsState()
     val uiState by marketViewModel.uiState.collectAsState()
     val snackbarHostState = LocalSnackbarHostState.current
@@ -144,7 +146,8 @@ fun MarketScreen(modifier: Modifier = Modifier,
                         coroutineScope.launch {
                             navigator.navigateTo(
                                 pane = ListDetailPaneScaffoldRole.Detail, item
-                            )                        }
+                            )
+                        }
                     })
             }
 
@@ -167,7 +170,7 @@ fun MarketScreen(modifier: Modifier = Modifier,
                 }
                 AnimatedPane {
                     MarketItemDetailScreen(item = marketItem, itemDetail = itemDetail,
-                        navigateToChat = {Log.i("logs","Navigating to chat from market item detail screen")},)
+                        navigateToChat = {navigateToChat()},)
 
                 }
             }

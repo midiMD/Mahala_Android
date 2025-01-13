@@ -18,7 +18,7 @@ import com.neighborly.neighborlyandroid.ui.LocalSnackbarHostState
 import com.neighborly.neighborlyandroid.ui.navigation.Screen
 
 @Composable
-fun AddInventoryScreen(onNavigateToScreen:(screen:Screen)->Unit,
+fun AddInventoryScreen(onNavigateToInventoryHome:()->Unit,
                         viewModel:AddInventoryViewModel = viewModel(factory = AddInventoryViewModel.Factory),
                 ) {
 
@@ -34,8 +34,8 @@ fun AddInventoryScreen(onNavigateToScreen:(screen:Screen)->Unit,
 
     }
 }
-@Preview
-@Composable
-fun AddInventoryScreenPreview(){
-    AddInventoryScreen(onNavigateToScreen ={screen-> Log.d("logs", "Navigating to screen: " + screen.route)} )
-}
+//@Preview
+//@Composable
+//fun AddInventoryScreenPreview(){
+//    AddInventoryScreen(onNavigateToScreen ={screen-> Log.d("logs", "Navigating to screen: " + screen.route)} )
+//}

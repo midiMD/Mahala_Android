@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     //alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.compose.compiler)
+    id("kotlin-parcelize")
     alias(libs.plugins.org.jetbrains.kotlin.android)
 }
 
@@ -51,7 +52,6 @@ android {
 dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.adaptive.navigation.android)
-    val lifecycle_version = "2.8.7"
     // Requests
     implementation(libs.retrofit)
     implementation(libs.converter.gson) // convert json to a Kotlin object
