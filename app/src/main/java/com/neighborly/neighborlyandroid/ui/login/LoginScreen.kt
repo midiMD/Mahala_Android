@@ -54,13 +54,14 @@ import com.neighborly.neighborlyandroid.ui.login.components.AccountQueryComponen
 import com.neighborly.neighborlyandroid.ui.login.components.HeadingTextComponent
 import com.neighborly.neighborlyandroid.ui.login.components.MyTextFieldComponent
 import com.neighborly.neighborlyandroid.ui.login.components.PasswordTextFieldComponent
-import com.neighborly.neighborlyandroid.ui.navigation.Screen
+
 import com.neighborly.neighborlyandroid.ui.theme.AccentColor
 import com.neighborly.neighborlyandroid.ui.theme.GrayColor
 import com.neighborly.neighborlyandroid.ui.theme.Secondary
 
 @Composable
-fun LoginScreen(onNavigateToScreen:(screen:Screen)->Unit,
+fun LoginScreen(onNavigateToRegister:()->Unit,
+                navigateToMarket:()->Unit,
                 viewModel:LoginViewModel = viewModel(factory = LoginViewModel.Factory),
                 ) {
 
@@ -88,8 +89,8 @@ fun LoginScreen(onNavigateToScreen:(screen:Screen)->Unit,
                 LoginScreenState.Error.MissingFields -> {
                     LoginFormAndButton(
                         onClickLogin = viewModel::onLoginButtonPress,
-                        onClickGoogle = { Log.i("logs","Auth with google ")},
-                        onNavigateToScreen = {screen: Screen ->  onNavigateToScreen(screen)}
+                        onClickGoogleLogin = { Log.i("logs","Auth with google ")},
+                        onNavigateToRegister = onNavigateToRegister
                     )
                     LaunchedEffect(uiState){
                         when(uiState){
@@ -125,7 +126,7 @@ fun LoginScreen(onNavigateToScreen:(screen:Screen)->Unit,
                     ) {
                         SuccessTick()
                     }
-                    onNavigateToScreen(Screen.Market)
+                    navigateToMarket()
 
                 }
             }
@@ -136,8 +137,8 @@ fun LoginScreen(onNavigateToScreen:(screen:Screen)->Unit,
 @Composable
 fun LoginFormAndButton(
     onClickLogin:(String,String)->Unit,
-    onClickGoogle:()->Unit,
-    onNavigateToScreen: (screen:Screen)->Unit
+    onClickGoogleLogin:()->Unit,
+    onNavigateToRegister: ()->Unit
 ){
     var emailFieldText: String by rememberSaveable  { mutableStateOf("") }
     var passwordFieldText: String by rememberSaveable { mutableStateOf("") }
@@ -228,7 +229,7 @@ fun LoginFormAndButton(
 
             Spacer(modifier = Modifier.height(2.dp))
             // e.g. "Already have an account"
-            AccountQueryComponent("Don't have an account?", "Register", onNavigateToScreen = {screen: Screen -> onNavigateToScreen(screen)  })
+            AccountQueryComponent("Don't have an account?", "Register", onNavigateToScreen = {onNavigateToRegister()})
         }
     }
 }

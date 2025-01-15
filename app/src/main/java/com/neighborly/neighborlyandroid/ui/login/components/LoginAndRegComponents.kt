@@ -71,7 +71,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.neighborly.neighborlyandroid.R
-import com.neighborly.neighborlyandroid.ui.navigation.Screen
 import com.neighborly.neighborlyandroid.ui.theme.AccentColor
 import com.neighborly.neighborlyandroid.ui.theme.BgColor
 import com.neighborly.neighborlyandroid.ui.theme.GrayColor
@@ -294,7 +293,7 @@ fun RegistrationTAndCText(privacyPolicyUrl:String ="http://www.google.com", term
 fun AccountQueryComponent(
     textQuery: String,
     textClickable: String,
-    onNavigateToScreen: (screen:Screen) ->Unit
+    onNavigateToScreen: () ->Unit
 ) {
 
     val annonatedString = buildAnnotatedString {
@@ -307,14 +306,9 @@ fun AccountQueryComponent(
             tag = textClickable,
             styles = TextLinkStyles(SpanStyle(color = Secondary))
         ){
-            val tag = (it as LinkAnnotation.Clickable).tag
-            Log.i("logs","clicked "+ tag)
-            if (tag == "Login") {
-                onNavigateToScreen(Screen.Login)
-            } else if (tag == "Register"){
-                onNavigateToScreen(Screen.Register)
-
-            }
+//            val tag = (it as LinkAnnotation.Clickable).tag
+//            Log.i("logs","clicked "+ tag)
+            onNavigateToScreen()
         }
 
         withStyle(style = SpanStyle(color = Secondary, fontSize = 15.sp)) {

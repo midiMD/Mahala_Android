@@ -55,14 +55,12 @@ import com.neighborly.neighborlyandroid.ui.login.components.AccountQueryComponen
 import com.neighborly.neighborlyandroid.ui.login.components.HeadingTextComponent
 import com.neighborly.neighborlyandroid.ui.login.components.MyTextFieldComponent
 import com.neighborly.neighborlyandroid.ui.login.components.PasswordTextFieldComponent
-import com.neighborly.neighborlyandroid.ui.navigation.Screen
 import com.neighborly.neighborlyandroid.ui.theme.AccentColor
 import com.neighborly.neighborlyandroid.ui.theme.GrayColor
 import com.neighborly.neighborlyandroid.ui.theme.Secondary
 
 @Composable
-fun InventoryScreen(onNavigateToScreen:(screen:Screen)->Unit,
-//                viewModel:InventoryViewModel = viewModel(factory = InventoryViewModel.Factory),
+fun InventoryScreen(onNavigateToInventoryView:()->Unit,onNavigateToInventoryAdd:()->Unit
                 ) {
 
     //val uiState by viewModel.uiState.collectAsState()
@@ -83,18 +81,18 @@ fun InventoryScreen(onNavigateToScreen:(screen:Screen)->Unit,
                 verticalArrangement = Arrangement.spacedBy(16.dp), // Spacing between buttons
                 horizontalAlignment = Alignment.CenterHorizontally // Align buttons horizontally
             ) {
-                Button(onClick = { onNavigateToScreen(Screen.ViewInventory) }) {
+                Button(onClick = onNavigateToInventoryView) {
                     Text("View Items", fontSize = 16.sp)
                 }
-                Button(onClick = { onNavigateToScreen(Screen.AddInventory) }) {
+                Button(onClick = onNavigateToInventoryAdd) {
                     Text("Add Item", fontSize = 16.sp)
                 }
             }
         }
     }
 }
-@Preview
-@Composable
-fun InventoryScreenPreview(){
-    InventoryScreen(onNavigateToScreen ={screen-> Log.d("logs", "Navigating to screen: " + screen.route)} )
-}
+//@Preview
+//@Composable
+//fun InventoryScreenPreview(){
+//    InventoryScreen(onNavigateToScreen ={screen-> Log.d("logs", "Navigating to screen: " + screen.route)} )
+//}

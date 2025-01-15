@@ -40,9 +40,8 @@ import com.neighborly.neighborlyandroid.ui.inventory.view.ViewInventoryViewModel
 import com.neighborly.neighborlyandroid.ui.login.LoginScreen
 import com.neighborly.neighborlyandroid.ui.market.MarketScreen
 import com.neighborly.neighborlyandroid.ui.navigation.MahalaNavHost
-import com.neighborly.neighborlyandroid.ui.navigation.Screen
+import com.neighborly.neighborlyandroid.ui.navigation.isRouteInHierarchy
 import com.neighborly.neighborlyandroid.ui.navigation.showNavBarRoutes
-import com.neighborly.neighborlyandroid.ui.navigation.topLevelRoutes
 import com.neighborly.neighborlyandroid.ui.register.RegistrationScreen
 import kotlinx.coroutines.launch
 
@@ -58,7 +57,14 @@ fun MahalaApp(
     val snackbarHostState = remember{appState.snackbarHostState}
     val navBackStackEntry by appState.navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination  // apropo, this is also reactive because it is derived from state. So it acts as a state
-
+//    Log.d("logs","Current destination: ${currentDestination.toString()}")
+//    Log.d("logs","Current Top level destination: ${appState.currentTopLevelDestination.toString()}")
+//    if (currentDestination != null) {
+//        Log.d("logs","Hierarchy for $currentDestination")
+//        currentDestination.hierarchy.forEach {
+//            Log.d("logs",it.toString())
+//        }
+//    }
     CompositionLocalProvider(
         values = arrayOf(
             LocalSnackbarHostState provides snackbarHostState
@@ -70,53 +76,36 @@ fun MahalaApp(
     ) {
         Scaffold(
             bottomBar = {
-                if (currentDestination != null) {
-                    if (currentDestination.route in showNavBarRoutes) {
-                        BottomNavigation(
-                            contentColor = MaterialTheme.colorScheme.primary
-                        ) {
-                            topLevelRoutes.forEach { topLevelRoute ->
+                //if (appState.currentDestination != null && appState.currentDestination!!.route in showNavBarRoutes) {
 
-                                val isSelected = (currentDestination.route?.contains(topLevelRoute.screen.route) == true)
-                                //val isSelected = ()
-//                                Log.i("logs","Current destination hierarchy "+ currentDestination.hierarchy.iterator().toString())
-//                                val isSelected =currentDestination.hierarchy.any {
-//                                    it.hasRoute(
-//                                        topLevelRoute.screen.route::class
-//                                    )
-//                                } == true
-                                BottomNavigationItem(
-                                    icon = {
-                                        Icon(contentDescription = topLevelRoute.name,
-                                            imageVector = if (isSelected){
-                                               topLevelRoute.selectedIcon
-                                            }else{
-                                                topLevelRoute.unselectedIcon
-                                            })
-                                    },
-                                    label = null, // don't display the name of the destinatin under the icon
-                                    selected = isSelected,
-                                    onClick = {
-                                        Log.d("logs","Clicked on  bottom nav bar item ${topLevelRoute.screen.route}")
-                                        appState.navController.navigate(topLevelRoute.screen.route) {
-                                            // Pop up to the start destination of the graph to
-                                            // avoid building up a large stack of destinations
-                                            // on the back stack as users select items
-                                            popUpTo(appState.navController.graph.findStartDestination().id) {
-                                                saveState = true
-                                            }
-//                                            // Avoid multiple copies of the same destination when
-//                                            // reselecting the same item
-                                            launchSingleTop = true
-                                            // Restore state when reselecting a previously selected item
-                                            restoreState = true
-                                        }
-                                    }
-                                )
-                            }
+                if (appState.currentTopLevelDestination != null) {
+                    BottomNavigation(
+                        contentColor = MaterialTheme.colorScheme.primary
+                    ) {
+                        appState.topLevelDestinations.forEach { topLevelDestination ->
 
+                            val isSelected = currentDestination
+                                .isRouteInHierarchy(topLevelDestination.baseRoute)
+                            BottomNavigationItem(
+                                icon = {
+                                    Icon(contentDescription = topLevelDestination.name,
+                                        imageVector = if (isSelected){
+                                           topLevelDestination.selectedIcon
+                                        }else{
+                                            topLevelDestination.unselectedIcon
+                                        })
+                                },
+                                label = null, // don't display the name of the destinatin under the icon
+                                selected = isSelected,
+                                onClick = {
+                                    //Log.d("logs","Clicked on  bottom nav bar item ${topLevelDestination.name}")
+                                    appState.navigateToTopLevelDestination(topLevelDestination)
+                                }
+                            )
                         }
+
                     }
+
                 }
             },
             snackbarHost = { SnackbarHost(LocalSnackbarHostState.current) }
@@ -124,7 +113,7 @@ fun MahalaApp(
             Box(modifier = Modifier.padding(paddingValues)) {
                 //create the navController for the whole application
                 MahalaNavHost(
-                    navController = appState.navController,
+                    appState= appState
                 )
             }
         }

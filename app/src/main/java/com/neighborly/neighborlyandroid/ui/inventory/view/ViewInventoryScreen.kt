@@ -31,7 +31,6 @@ import com.neighborly.neighborlyandroid.ui.market.CategoryOption
 import com.neighborly.neighborlyandroid.ui.market.MarketScreenState
 import com.neighborly.neighborlyandroid.ui.market.components.MarketItemsSection
 import com.neighborly.neighborlyandroid.ui.market.components.MarketTopBar
-import com.neighborly.neighborlyandroid.ui.navigation.Screen
 
 @Composable
 fun ViewInventoryScreen(viewModel:ViewInventoryViewModel = viewModel(factory = ViewInventoryViewModel.Factory),

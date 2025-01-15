@@ -39,7 +39,6 @@ import com.neighborly.neighborlyandroid.domain.model.MarketItemDetail
 import com.neighborly.neighborlyandroid.ui.common.image.BrokenItemImage
 import com.neighborly.neighborlyandroid.ui.common.image.ItemImage
 import com.neighborly.neighborlyandroid.ui.market.components.ItemCardDescription
-import com.neighborly.neighborlyandroid.ui.navigation.Screen
 
 
 @Composable

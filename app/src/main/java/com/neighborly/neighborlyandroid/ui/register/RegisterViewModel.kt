@@ -35,7 +35,7 @@ fun validateDetailsLocally(details: RegistrationDetails): RegistrationScreenStat
 
     // Check if terms and conditions are accepted
     if (!details.isCheckedTAndC) {
-        return RegistrationScreenState.Error.UnCheckedTAndC
+        return RegistrationScreenState.Error("Must agree to T&C")
     }
 
     // Check for missing fields
@@ -48,12 +48,12 @@ fun validateDetailsLocally(details: RegistrationDetails): RegistrationScreenStat
     if (details.postcode.isEmpty()) missingFields.add("Postcode")
 
     if (missingFields.isNotEmpty()) {
-        return RegistrationScreenState.Error.MissingFields(missingFields)
+        return RegistrationScreenState.MissingFields(missingFields)
     }
 
     // Basic email validation
     if (!details.email.contains("@")) {
-        return RegistrationScreenState.Error.InvalidEmail
+        return RegistrationScreenState.Error("Invalid email address")
     }
 
     // If all checks pass, return null
@@ -97,22 +97,21 @@ class RegisterViewModel(private val registerRepository: RegisterRepositoryImpl,
                     RegisterResponseState.Success -> {
                         _uiState.value = RegistrationScreenState.Success
                     }
-                    RegisterResponseState.Error.ServerError -> {
-                        _uiState.value = RegistrationScreenState.Error.ServerError
-                    }
+
                     RegisterResponseState.Error.EmailExists -> {
-                        _uiState.value = RegistrationScreenState.Error.EmailExists
+                        _uiState.value = RegistrationScreenState.Error("This email exists. Please log in or Forgot Password")
                     }
                     RegisterResponseState.Error.InvalidHouseError -> {
-                        _uiState.value = RegistrationScreenState.Error.InvalidHouseError
+                        _uiState.value = RegistrationScreenState.Error("House Address is invalid")
                     }
                     RegisterResponseState.Error.NetworkError -> {
-                        _uiState.value = RegistrationScreenState.Error.NetworkError
+                        _uiState.value = RegistrationScreenState.Error("Could not connect. Check your Internet")
+                    }
+                    RegisterResponseState.Error.ClientError,
+                    RegisterResponseState.Error.ServerError -> {
+                        _uiState.value = RegistrationScreenState.Error("Something went wrong. Try again")
                     }
 
-                    RegisterResponseState.Error.ClientError -> {
-                        _uiState.value = RegistrationScreenState.Error.NetworkError
-                    }
                 }
 
             }

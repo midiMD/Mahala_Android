@@ -52,7 +52,7 @@ class LoginService(
     }
 
     @POST("register/")
-    override suspend fun register(@Body request: RegisterRequest): Response<RegisterResponse> {
+    override suspend fun register(@Body request: RegisterRequest):Response<Unit> {
         val response = loginApi.register(request)
 
         return response

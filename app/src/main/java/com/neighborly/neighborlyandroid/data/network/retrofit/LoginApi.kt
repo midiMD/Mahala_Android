@@ -19,5 +19,5 @@ interface LoginApi{
     @POST("login/")
     suspend fun login(@Body request: LoginRequest): Response<LoginApiResponse.Success>
     @POST("register/")
-    suspend fun register(@Body request: RegisterRequest): Response<RegisterResponse>
+    suspend fun register(@Body request: RegisterRequest):Response<Unit>
 }

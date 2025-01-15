@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     id("kotlin-parcelize")
     alias(libs.plugins.org.jetbrains.kotlin.android)
+    kotlin("plugin.serialization") version "2.1.0"
 }
 
 android {
@@ -103,5 +104,6 @@ dependencies {
     implementation(libs.androidx.adaptive)
     implementation(libs.androidx.adaptive.layout)
     implementation(libs.androidx.adaptive.navigation)
+    implementation(libs.kotlinx.serialization.json)
 
 }

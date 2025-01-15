@@ -22,6 +22,7 @@ class RegisterRepositoryImpl(private val apiService: LoginService): RegisterRepo
             val response = apiService.register(registerRequestData)
 
             if(response.isSuccessful){
+                Log.d("logs","RegisterRepo success registration")
                 RegisterResponseState.Success
 
             } else if (response.code() == 500){
@@ -42,8 +43,9 @@ class RegisterRepositoryImpl(private val apiService: LoginService): RegisterRepo
             }
 
         }catch (e:Exception){
-            e.message?.let { Log.d("RegisterRepositoryError", it) }
-            RegisterResponseState.Error.ClientError
+            throw e
+//            e.message?.let { Log.d("RegisterRepositoryError", it) }
+//            RegisterResponseState.Error.ClientError
 
         }
 

@@ -3,15 +3,28 @@ package com.neighborly.neighborlyandroid.ui
 import android.content.Context
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.activity
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navOptions
 import com.neighborly.neighborlyandroid.domain.model.MarketItem
-import com.neighborly.neighborlyandroid.ui.navigation.Screen
+import com.neighborly.neighborlyandroid.ui.navigation.ChatBaseRoute
+import com.neighborly.neighborlyandroid.ui.navigation.InventoryBaseRoute
+import com.neighborly.neighborlyandroid.ui.navigation.MarketRoute
+import com.neighborly.neighborlyandroid.ui.navigation.TopLevelDestination
+import com.neighborly.neighborlyandroid.ui.navigation.navigateToChatHome
+import com.neighborly.neighborlyandroid.ui.navigation.navigateToInventoryHome
+import com.neighborly.neighborlyandroid.ui.navigation.navigateToMarket
 import kotlinx.coroutines.flow.debounce
 
 
@@ -29,12 +42,55 @@ class MahalaAppState(
 ) {
     private val _snackbarHostState = SnackbarHostState()
     val snackbarHostState: SnackbarHostState get() = _snackbarHostState
+    private val previousDestination = mutableStateOf<NavDestination?>(null)
 
 
-    fun navigateToMarketItemDetails(marketItem: MarketItem, from: NavBackStackEntry) {
-        if (from.lifecycleIsResumed()) {
-            navController.navigate(Screen.MarketItemDetails.createRoute(marketItem))
+    val currentTopLevelDestination: TopLevelDestination?
+        @Composable get() {
+            return topLevelDestinations.firstOrNull { topLevelDestination ->
+                currentDestination?.hierarchy?.any {
+                    it.hasRoute(topLevelDestination.baseRoute)
+                } ?: false
+           //     currentDestination?.hasRoute(route = topLevelDestination.baseRoute) == true
+            }
         }
+    val currentDestination: NavDestination?
+        @Composable get() {
+            // Collect the currentBackStackEntryFlow as a state
+            val currentEntry = navController.currentBackStackEntryFlow
+                .collectAsState(initial = null)
+
+            // Fallback to previousDestination if currentEntry is null
+            return currentEntry.value?.destination.also { destination ->
+                if (destination != null) {
+                    previousDestination.value = destination
+                }
+            } ?: previousDestination.value
+        }
+    val topLevelDestinations: List<TopLevelDestination> = TopLevelDestination.entries
+    fun navigateToTopLevelDestination(topLevelDestination: TopLevelDestination) {
+
+        val topLevelNavOptions = navOptions {
+            // Pop up to the start destination of the graph to
+            // avoid building up a large stack of destinations
+            // on the back stack as users select items
+            popUpTo(navController.graph.findStartDestination().id) {
+                saveState = true
+            }
+            // Avoid multiple copies of the same destination when
+            // reselecting the same item
+            launchSingleTop = true
+            // Restore state when reselecting a previously selected item
+            restoreState = true
+        }
+
+        when (topLevelDestination) {
+            TopLevelDestination.MARKET -> {navController.navigateToMarket(topLevelNavOptions)}
+            TopLevelDestination.INVENTORY -> {navController.navigateToInventoryHome(topLevelNavOptions)}
+            TopLevelDestination.CHAT -> {navController.navigateToChatHome(topLevelNavOptions)}
+            TopLevelDestination.SETTINGS -> TODO()
+        }
+
     }
 }
 private fun NavBackStackEntry.lifecycleIsResumed() =

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,7 +22,6 @@ import com.neighborly.neighborlyandroid.ui.chat.components.ConversationItem
 import com.neighborly.neighborlyandroid.ui.chat.components.HomeAppBar
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatHomeScreen(onNavigateToChatScreen:()->Unit,
                    viewModel: ChatViewModel
@@ -30,7 +30,7 @@ fun ChatHomeScreen(onNavigateToChatScreen:()->Unit,
         topBar = {
             HomeAppBar(newMessageCount =viewModel.newMessageCount )
         },
-        containerColor = Color.Transparent,
+        containerColor = MaterialTheme.colorScheme.background,
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
@@ -39,6 +39,7 @@ fun ChatHomeScreen(onNavigateToChatScreen:()->Unit,
                 .fillMaxSize()
         ) {
             items(listOfConversations) { conversation ->
+                //Text("asdads")
                 ConversationItem(
                     conversation = conversation,
                     onClick = {

@@ -51,13 +51,12 @@ import com.neighborly.neighborlyandroid.ui.login.components.HouseRegistrationHea
 import com.neighborly.neighborlyandroid.ui.login.components.MyTextFieldComponent
 import com.neighborly.neighborlyandroid.ui.login.components.PasswordTextFieldComponent
 import com.neighborly.neighborlyandroid.ui.login.components.RegistrationTAndC
-import com.neighborly.neighborlyandroid.ui.navigation.Screen
 import com.neighborly.neighborlyandroid.ui.theme.AccentColor
 import com.neighborly.neighborlyandroid.ui.theme.Secondary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegistrationScreen(onNavigateToScreen:(screen:Screen)->Unit,
+fun RegistrationScreen(onNavigateToLogin:()->Unit,
                        viewModel: RegisterViewModel = viewModel(factory = RegisterViewModel.Factory)
 ) {
 
@@ -77,54 +76,40 @@ fun RegistrationScreen(onNavigateToScreen:(screen:Screen)->Unit,
         ) {
             HeadingTextComponent(value = "Create an Account")
             Spacer(modifier = Modifier.height(5.dp))
-            if (uiState == RegistrationScreenState.Loading){
-                LoadingSpinner()
-            }else if (uiState==RegistrationScreenState.Success){
-                AnimatedVisibility(
-                    visible = true,
-                    enter = fadeIn() + scaleIn(),
-                    exit = fadeOut() + scaleOut()
-                ) {
-                    SuccessTick()
-                }
-                onNavigateToScreen(Screen.Market)
-            }
-            else {
-                RegisterFormAndButton(
-                    onClickRegister = viewModel::onRegisterButtonPress,
-                    onNavigateToScreen = {screen->onNavigateToScreen(screen)}
-                )
-                LaunchedEffect(uiState) {
-                    when (uiState) {
-                        RegistrationScreenState.Error.EmailExists -> {
-                            showSnackbar(snackbarHostState, "Invalid Credentials")
-                        }
-
-                        RegistrationScreenState.Error.InvalidEmail -> {
-                            showSnackbar(snackbarHostState, "Invalid Email")
-                        }
-
-                        RegistrationScreenState.Error.InvalidHouseError -> {
-                            showSnackbar(snackbarHostState, "Invalid House Address")
-                        }
-                        is RegistrationScreenState.Error.MissingFields ->
-                        {showSnackbar(snackbarHostState, "Fill in all compulsory fields")}
-                        RegistrationScreenState.Error.NetworkError,
-                        RegistrationScreenState.Error.ServerError -> {
-                            showSnackbar(snackbarHostState, "Network Error")
-                        }
-                        RegistrationScreenState.Error.UnCheckedTAndC ->
-                        {
-                            showSnackbar(snackbarHostState, "Must consent to T&Cs to continue")
-                        }
-                        RegistrationScreenState.Error.WeakPassword -> {
-                            showSnackbar(snackbarHostState, "Password is weak")
-                        }
-                        RegistrationScreenState.Idle,
-                        RegistrationScreenState.Loading,
-                        RegistrationScreenState.Success -> {}
+            RegisterFormAndButton(
+                onClickRegister = viewModel::onRegisterButtonPress,
+                onNavigateToLogin = {onNavigateToLogin()}
+            )
+            when (uiState){
+                is RegistrationScreenState.Error -> {
+                    LaunchedEffect(Unit) {
+                        snackbarHostState.showSnackbar((uiState as RegistrationScreenState.Error).message)
                     }
-                    viewModel.toggleIdle() // change state back to Idle after Errors are shown
+                }
+                RegistrationScreenState.Idle -> {
+
+                }
+                RegistrationScreenState.Loading -> {
+                    LoadingSpinner()
+                }
+                is RegistrationScreenState.MissingFields -> {
+                    LaunchedEffect(Unit) {
+                        snackbarHostState.showSnackbar("Fill all compulsory fields")
+                    }
+                }
+                RegistrationScreenState.Success -> {
+                    AnimatedVisibility(
+                        visible = true,
+                        enter = fadeIn() + scaleIn(),
+                        exit = fadeOut() + scaleOut()
+                    ) {
+                        SuccessTick()
+                    }
+                    LaunchedEffect(Unit) {
+                        snackbarHostState.showSnackbar("Registration successful")
+                    }
+                    onNavigateToLogin()
+
                 }
             }
 
@@ -137,7 +122,7 @@ fun RegistrationScreen(onNavigateToScreen:(screen:Screen)->Unit,
 @Composable
 fun RegisterFormAndButton(
     onClickRegister:(details: RegistrationDetails)->Unit,
-    onNavigateToScreen:(screen:Screen)->Unit
+    onNavigateToLogin:()->Unit
 ) {
     var fullNameFieldText:String by remember { mutableStateOf("") }
     var emailFieldText: String by remember { mutableStateOf("") }
@@ -245,7 +230,7 @@ fun RegisterFormAndButton(
                 }
                 Spacer(modifier = Modifier.height(2.dp))
                 // e.g. "Already have an account"
-                AccountQueryComponent("Already have an account? ", "Login", onNavigateToScreen = {screen -> onNavigateToScreen(screen)})
+                AccountQueryComponent("Already have an account? ", "Login", onNavigateToScreen = {onNavigateToLogin()})
             }
         }
     }

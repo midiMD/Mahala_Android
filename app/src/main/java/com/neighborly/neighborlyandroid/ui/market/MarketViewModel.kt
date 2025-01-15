@@ -101,7 +101,7 @@ class MarketViewModel(private val marketRepository: MarketRepository,
     }
     suspend fun processResponse(marketResponseState: Deferred<Resource<List<MarketItem>>>) {
         // Await the result when ready
-        delay(2000) // A coroutine-friendly function that suspends for 1 second
+        delay(1000) // A coroutine-friendly function that suspends for 1 second
         val responseState = marketResponseState.await()  // This suspends until fetchData completes
         _uiState.value = MarketScreenState.Loading
         when (responseState){

@@ -1,6 +1,5 @@
 package com.neighborly.neighborlyandroid.ui.market
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,10 +11,8 @@ import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldDefaults
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
-import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldScope
 import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
 import androidx.compose.material3.adaptive.navigation.NavigableListDetailPaneScaffold
-import androidx.compose.material3.adaptive.navigation.ThreePaneScaffoldNavigator
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,19 +24,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavHostController
 import com.neighborly.neighborlyandroid.domain.model.Category
 import com.neighborly.neighborlyandroid.domain.model.MarketItem
 import com.neighborly.neighborlyandroid.domain.model.SortBy
 import com.neighborly.neighborlyandroid.ui.LocalSnackbarHostState
-import com.neighborly.neighborlyandroid.ui.login.LoginViewModel
 import com.neighborly.neighborlyandroid.ui.market.components.MarketItemsSection
 import com.neighborly.neighborlyandroid.ui.market.components.MarketTopBar
 import com.neighborly.neighborlyandroid.ui.market.item_detail.MarketItemDetailScreen
-import com.neighborly.neighborlyandroid.ui.navigation.Screen
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.neighborly.neighborlyandroid.domain.model.MarketItemDetail
@@ -125,7 +117,7 @@ private fun MarketListScreen(
 @Composable
 fun MarketScreen(modifier: Modifier = Modifier,
                  marketViewModel: MarketViewModel = viewModel(factory = MarketViewModel.Factory),
-                 navigateToChat:()->Unit) {
+                 onChatButtonClick:()->Unit) {
     val itemsState by marketViewModel.itemsState.collectAsState()
     val uiState by marketViewModel.uiState.collectAsState()
     val snackbarHostState = LocalSnackbarHostState.current
@@ -170,7 +162,7 @@ fun MarketScreen(modifier: Modifier = Modifier,
                 }
                 AnimatedPane {
                     MarketItemDetailScreen(item = marketItem, itemDetail = itemDetail,
-                        navigateToChat = {navigateToChat()},)
+                        navigateToChat = {onChatButtonClick()},)
 
                 }
             }
