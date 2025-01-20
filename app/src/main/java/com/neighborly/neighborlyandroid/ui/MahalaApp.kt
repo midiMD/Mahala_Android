@@ -41,7 +41,6 @@ import com.neighborly.neighborlyandroid.ui.login.LoginScreen
 import com.neighborly.neighborlyandroid.ui.market.MarketScreen
 import com.neighborly.neighborlyandroid.ui.navigation.MahalaNavHost
 import com.neighborly.neighborlyandroid.ui.navigation.isRouteInHierarchy
-import com.neighborly.neighborlyandroid.ui.navigation.showNavBarRoutes
 import com.neighborly.neighborlyandroid.ui.register.RegistrationScreen
 import kotlinx.coroutines.launch
 

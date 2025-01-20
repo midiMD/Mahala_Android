@@ -23,7 +23,7 @@ import com.neighborly.neighborlyandroid.ui.chat.components.HomeAppBar
 
 
 @Composable
-fun ChatHomeScreen(onNavigateToChatScreen:()->Unit,
+fun ChatHomeScreen(onConvoClick:(convoId:Long)->Unit,
                    viewModel: ChatViewModel
 ) {
     Scaffold(
@@ -43,8 +43,8 @@ fun ChatHomeScreen(onNavigateToChatScreen:()->Unit,
                 ConversationItem(
                     conversation = conversation,
                     onClick = {
-                        viewModel.selectChat(conversation)
-                        onNavigateToChatScreen()
+                        viewModel.saveSenderImage(conversation.image)
+                        onConvoClick(conversation.id)
                     }
                 )
             }

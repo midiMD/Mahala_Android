@@ -44,6 +44,9 @@ class MarketViewModel(private val marketRepository: MarketRepository,
                       private val savedStateHandle: SavedStateHandle
 ): ViewModel()  {
 
+    init{
+        Log.d("logs","MarketViewModel instantiated")
+    }
     private val _itemsState = MutableStateFlow<List<MarketItem>>(emptyList()) // what we modify in the view model
     val itemsState = _itemsState.asStateFlow() // expose it as read-only
     // we don't wanna expose the mutable list to the outside so we make it private

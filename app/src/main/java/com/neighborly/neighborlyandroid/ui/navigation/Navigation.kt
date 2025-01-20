@@ -1,7 +1,6 @@
 package com.neighborly.neighborlyandroid.ui.navigation
 
 import android.util.Log
-import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.ChatBubble
@@ -14,40 +13,43 @@ import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
+import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.neighborly.neighborlyandroid.ui.login.LoginScreen
 import com.neighborly.neighborlyandroid.ui.market.MarketScreen
 import com.neighborly.neighborlyandroid.ui.register.RegistrationScreen
 import androidx.navigation.navigation
-import com.neighborly.neighborlyandroid.domain.model.InventoryItem
-import com.neighborly.neighborlyandroid.domain.model.MarketItem
 import com.neighborly.neighborlyandroid.ui.MahalaAppState
 import com.neighborly.neighborlyandroid.ui.chat.ChatHomeScreen
 import com.neighborly.neighborlyandroid.ui.chat.ChatScreen
 import com.neighborly.neighborlyandroid.ui.chat.ChatViewModel
+import com.neighborly.neighborlyandroid.ui.chat.ConvoViewModel
 import com.neighborly.neighborlyandroid.ui.inventory.InventoryScreen
 import com.neighborly.neighborlyandroid.ui.inventory.add.AddInventoryScreen
 import com.neighborly.neighborlyandroid.ui.inventory.add.AddInventoryViewModel
 import com.neighborly.neighborlyandroid.ui.inventory.view.ViewInventoryScreen
 import com.neighborly.neighborlyandroid.ui.inventory.view.ViewInventoryViewModel
 import com.neighborly.neighborlyandroid.ui.login.LoginViewModel
+import com.neighborly.neighborlyandroid.ui.login.reset.PasswordResetScreen
+import com.neighborly.neighborlyandroid.ui.login.reset.PasswordResetViewModel
+import com.neighborly.neighborlyandroid.ui.market.MarketViewModel
 import kotlin.reflect.KClass
 import kotlinx.serialization.Serializable
 
 @Serializable data object LoginRoute
 @Serializable data object RegisterRoute
+@Serializable data object ResetPasswordRoute
 @Serializable data object MarketRoute
 @Serializable data object ChatBaseRoute
-@Serializable data object ChatRoute
+@Serializable data class ConvoRoute(val convoId:Long)
 @Serializable data object ChatHomeRoute
 @Serializable data object InventoryBaseRoute
 @Serializable data object InventoryHomeRoute
@@ -56,24 +58,32 @@ import kotlinx.serialization.Serializable
 @Serializable data object SettingsRoute
 
 @Composable
-fun MahalaNavHost(appState: MahalaAppState
-                  ){
+fun MahalaNavHost(appState: MahalaAppState){
     val navController = appState.navController
 
     NavHost(
         navController = navController,
         startDestination = LoginRoute
     ) {
-        composable<MarketRoute>{
-            MarketScreen(onChatButtonClick = {appState.navigateToTopLevelDestination(TopLevelDestination.CHAT)})
+        composable<MarketRoute>{backStackEntry->
+            Log.d("navigation","Backstack entry: $backStackEntry")
+            Log.d("navigation","LocalViewModelStoreOwner: ${LocalViewModelStoreOwner.current}")
+            Log.d("navigation","Navigating to MarketScreen")
+            MarketScreen(onChatButtonClick = {appState.navigateToTopLevelDestination(TopLevelDestination.CHAT)},
+                marketViewModel = viewModel(factory = MarketViewModel.Factory)
+            )
         }
 
         composable<LoginRoute>{
             LoginScreen(
                 onNavigateToRegister = {navController.navigate(RegisterRoute)},
                 navigateToMarket = {appState.navigateToTopLevelDestination(TopLevelDestination.MARKET)},
-                viewModel = viewModel(factory = LoginViewModel.Factory)
+                viewModel = viewModel(factory = LoginViewModel.Factory),
+                onNavigateToResetPassword = {navController.navigate(ResetPasswordRoute)}
             )
+        }
+        composable<ResetPasswordRoute>{
+            PasswordResetScreen(viewModel = viewModel(factory = PasswordResetViewModel.Factory))
         }
         composable<RegisterRoute>{
             RegistrationScreen(onNavigateToLogin = {navController.navigate(LoginRoute)})
@@ -87,19 +97,20 @@ fun MahalaNavHost(appState: MahalaAppState
                 val parentEntry = remember(backStackEntry) {
                     navController.getBackStackEntry(ChatBaseRoute)
                 }
-                val viewModel: ChatViewModel = viewModel(parentEntry, factory = ChatViewModel.Factory)
+
+                val viewModel: ChatViewModel = viewModel(parentEntry,factory = ChatViewModel.Factory)
                 ChatHomeScreen(
-                    onNavigateToChatScreen = { navController.navigate(ChatRoute) },
+                    onConvoClick = {convoId: Long ->  navController.navigateToConvo(convoId = convoId)},
                     viewModel = viewModel
                 )
             }
-            composable<ChatRoute>{ backStackEntry ->
+            composable<ConvoRoute>{ backStackEntry ->
                 val parentEntry = remember(backStackEntry) {
                     navController.getBackStackEntry(ChatBaseRoute)
                 }
 
                 // Reuse the same ViewModel scoped to the "chatGraph" subgraph
-                val viewModel: ChatViewModel = viewModel(parentEntry,factory = ChatViewModel.Factory)
+                val viewModel: ConvoViewModel = viewModel(parentEntry,factory = ConvoViewModel.Factory)
                 ChatScreen(
                     onNavigateToChatHome = { appState.navigateToTopLevelDestination(TopLevelDestination.CHAT) },
                     viewModel = viewModel
@@ -134,9 +145,16 @@ fun MahalaNavHost(appState: MahalaAppState
     }
 
 }
+// when navigating to Top Level Destination, use appState.navigateToTopLevelDestination()
 fun NavController.navigateToMarket(navOptions: NavOptions) = navigate(route = MarketRoute, navOptions)
 fun NavController.navigateToInventoryHome(navOptions: NavOptions) = navigate(route = InventoryHomeRoute, navOptions)
 fun NavController.navigateToChatHome(navOptions: NavOptions) = navigate(route = ChatHomeRoute, navOptions)
+fun NavController.navigateToConvo(convoId: Long, navOptions: NavOptionsBuilder.() -> Unit = {}) {
+    navigate(route = ConvoRoute(convoId)) {
+        navOptions()
+    }
+}
+fun NavController.navigateToSettings(navOptions: NavOptions) = navigate(route = SettingsRoute, navOptions)
 
 
 fun NavDestination?.isRouteInHierarchy(route: KClass<*>) =
@@ -150,7 +168,6 @@ enum class TopLevelDestination(
     val unselectedIcon: ImageVector,
     val route:KClass<*>,
     val baseRoute:KClass<*> = route,
-    val childRoutes:List<KClass<*>> = emptyList()
 ) {
     MARKET(
         selectedIcon = Icons.Filled.OtherHouses,
@@ -162,14 +179,12 @@ enum class TopLevelDestination(
         unselectedIcon = Icons.Outlined.Build,
         route = InventoryHomeRoute::class,
         baseRoute= InventoryBaseRoute::class,
-        childRoutes = listOf(InventoryHomeRoute::class,InventoryAddRoute::class,InventoryViewRoute::class)
     ),
     CHAT(
         selectedIcon = Icons.Filled.ChatBubble,
         unselectedIcon = Icons.Outlined.ChatBubbleOutline,
         route = ChatHomeRoute::class,
         baseRoute = ChatBaseRoute::class,
-        childRoutes = listOf(ChatRoute::class,ChatHomeRoute::class)
     ),
     SETTINGS(
         selectedIcon = Icons.Filled.Settings,

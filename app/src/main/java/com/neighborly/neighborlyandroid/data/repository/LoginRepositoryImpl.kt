@@ -4,8 +4,10 @@ import android.util.Log
 import com.google.gson.Gson
 import com.neighborly.neighborlyandroid.data.datastore.TokenDataStore
 import com.neighborly.neighborlyandroid.common.LoginResponseState
+import com.neighborly.neighborlyandroid.common.ResetPasswordResponseState
 import com.neighborly.neighborlyandroid.data.network.dto.ApiErrorResponse
 import com.neighborly.neighborlyandroid.data.network.dto.authentication.LoginRequest
+import com.neighborly.neighborlyandroid.data.network.dto.authentication.PasswordResetRequest
 import com.neighborly.neighborlyandroid.data.network.retrofit.LoginService
 import com.neighborly.neighborlyandroid.domain.repository.LoginRepository
 import kotlinx.coroutines.Dispatchers
@@ -48,6 +50,30 @@ class LoginRepositoryImpl(private val apiService: LoginService,
 
 
 
+    }
+
+    override suspend fun resetPassword(email: String): ResetPasswordResponseState = withContext(Dispatchers.IO) {
+        try {
+            val response = apiService.passwordReset(PasswordResetRequest(email))
+            if (response.isSuccessful) {
+
+                ResetPasswordResponseState.Success
+            }else{
+                val apiError = Gson().fromJson(
+                    response.errorBody()!!.string(),
+                    ApiErrorResponse::class.java
+                )
+                Log.d("logs","LoginRepository.resetPassword error : $apiError")
+                if (apiError.type == "client_error"){
+                    ResetPasswordResponseState.Error.ClientError
+                }else{
+                    ResetPasswordResponseState.Error.ServerError
+                }
+            }
+        }catch (e:Exception){
+            e.message?.let { Log.d("logs", "LoginRepository resetPassword Error : $it") }
+            ResetPasswordResponseState.Error.ServerError
+        }
     }
 }
 

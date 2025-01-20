@@ -6,7 +6,7 @@ data class Conversation(
     val sender: String,
     val image: Int,
     val amILastSender: Boolean,
-    val message: String,
+    val message: String, // last message. Shown in ChatHome screen in the list of convos
     val time: String,
     val unread: Boolean,
 )

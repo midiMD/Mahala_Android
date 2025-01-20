@@ -5,6 +5,8 @@ import com.neighborly.neighborlyandroid.data.datastore.TokenDataStore
 import android.util.Log
 import com.neighborly.neighborlyandroid.data.network.dto.authentication.LoginApiResponse
 import com.neighborly.neighborlyandroid.data.network.dto.authentication.LoginRequest
+import com.neighborly.neighborlyandroid.data.network.dto.authentication.PasswordResetApiResponse
+import com.neighborly.neighborlyandroid.data.network.dto.authentication.PasswordResetRequest
 import com.neighborly.neighborlyandroid.data.network.dto.authentication.RegisterRequest
 import com.neighborly.neighborlyandroid.data.network.dto.authentication.RegisterResponse
 
@@ -50,6 +52,14 @@ class LoginService(
         // it deals with storage of token in TokenDataStore
 
     }
+    @POST("password-reset/")
+    override suspend fun passwordReset(@Body request: PasswordResetRequest): Response<Unit> {
+        Log.d("logs","Password reset request with: " + request.toString())
+        val response= loginApi.passwordReset(request)
+        return response
+
+    }
+
 
     @POST("register/")
     override suspend fun register(@Body request: RegisterRequest):Response<Unit> {

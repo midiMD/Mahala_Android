@@ -319,3 +319,23 @@ fun AccountQueryComponent(
     Text(text = annonatedString)
 }
 
+@Composable
+fun ResetPasswordQuery(navigateToResetScreen:()->Unit){
+    val annonatedString = buildAnnotatedString {
+//        withStyle(style = SpanStyle(color = TextColor, fontSize =MaterialTheme.typography.bodySmall.fontSize )) {
+//            append("Reset Password")
+//        }
+        val clickableLink = LinkAnnotation.Clickable(
+            tag = "Reset Password",
+            styles = TextLinkStyles(SpanStyle(color = Primary, fontSize = MaterialTheme.typography.bodyMedium.fontSize))
+        ){
+            navigateToResetScreen()
+        }
+
+
+        withLink(clickableLink) { append("Reset Password") }
+
+    }
+
+    Text(text = annonatedString)
+}

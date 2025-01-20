@@ -19,4 +19,15 @@ sealed class LoginApiResponse {
     )
 
 }
+data class PasswordResetRequest(
+    val email:String
+)
 
+sealed class PasswordResetApiResponse {
+    data object Success
+    data class Error(
+        val type:String,
+        val errors:List<ResponseErrorDetails>,
+    )
+
+}

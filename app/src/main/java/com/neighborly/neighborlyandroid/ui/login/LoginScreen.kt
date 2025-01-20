@@ -42,8 +42,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.neighborly.neighborlyandroid.R
 import com.neighborly.neighborlyandroid.ui.LocalSnackbarHostState
@@ -54,6 +56,7 @@ import com.neighborly.neighborlyandroid.ui.login.components.AccountQueryComponen
 import com.neighborly.neighborlyandroid.ui.login.components.HeadingTextComponent
 import com.neighborly.neighborlyandroid.ui.login.components.MyTextFieldComponent
 import com.neighborly.neighborlyandroid.ui.login.components.PasswordTextFieldComponent
+import com.neighborly.neighborlyandroid.ui.login.components.ResetPasswordQuery
 
 import com.neighborly.neighborlyandroid.ui.theme.AccentColor
 import com.neighborly.neighborlyandroid.ui.theme.GrayColor
@@ -62,6 +65,7 @@ import com.neighborly.neighborlyandroid.ui.theme.Secondary
 @Composable
 fun LoginScreen(onNavigateToRegister:()->Unit,
                 navigateToMarket:()->Unit,
+                onNavigateToResetPassword:()->Unit,
                 viewModel:LoginViewModel = viewModel(factory = LoginViewModel.Factory),
                 ) {
 
@@ -90,7 +94,8 @@ fun LoginScreen(onNavigateToRegister:()->Unit,
                     LoginFormAndButton(
                         onClickLogin = viewModel::onLoginButtonPress,
                         onClickGoogleLogin = { Log.i("logs","Auth with google ")},
-                        onNavigateToRegister = onNavigateToRegister
+                        onNavigateToRegister = onNavigateToRegister,
+                        onNavigateToResetPassword = onNavigateToResetPassword
                     )
                     LaunchedEffect(uiState){
                         when(uiState){
@@ -137,6 +142,7 @@ fun LoginScreen(onNavigateToRegister:()->Unit,
 @Composable
 fun LoginFormAndButton(
     onClickLogin:(String,String)->Unit,
+    onNavigateToResetPassword: () -> Unit,
     onClickGoogleLogin:()->Unit,
     onNavigateToRegister: ()->Unit
 ){
@@ -229,7 +235,37 @@ fun LoginFormAndButton(
 
             Spacer(modifier = Modifier.height(2.dp))
             // e.g. "Already have an account"
-            AccountQueryComponent("Don't have an account?", "Register", onNavigateToScreen = {onNavigateToRegister()})
+            AccountQueryComponent("Don't have an account? ", "Register", onNavigateToScreen = {onNavigateToRegister()})
+            ResetPasswordQuery(navigateToResetScreen = onNavigateToResetPassword)
+
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewLoginScreen() {
+    // Example UI state and constants
+    Surface(
+        color = Color.White,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+            .padding(28.dp)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Column {
+                HeadingTextComponent(value = "Welcome Back")
+            }
+            Spacer(modifier = Modifier.height(25.dp))
+             LoginFormAndButton(
+                onClickLogin = { a,b ->TODO() },
+                onClickGoogleLogin = { Log.i("Preview", "Auth with Google") },
+                onNavigateToRegister = { /* Example Register Navigation Action */ },
+                onNavigateToResetPassword = { /* Example Reset Password Navigation Action */ }
+            )
         }
     }
 }

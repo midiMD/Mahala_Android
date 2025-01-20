@@ -18,7 +18,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 
-class LoginViewModel(private val loginRepository: LoginRepository,
+
+
+open class LoginViewModel(private val loginRepository: LoginRepository,
                      private val savedStateHandle: SavedStateHandle
 ): ViewModel()  {
 
