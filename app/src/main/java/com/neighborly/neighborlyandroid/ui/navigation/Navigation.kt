@@ -1,6 +1,7 @@
 package com.neighborly.neighborlyandroid.ui.navigation
 
 import android.util.Log
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.ChatBubble
@@ -12,7 +13,9 @@ import androidx.compose.material.icons.outlined.OtherHouses
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -126,7 +129,7 @@ fun MahalaNavHost(appState: MahalaAppState){
             }
 
             composable<InventoryViewRoute>{backStackEntry->
-                ViewInventoryScreen(
+                ViewInventoryScreen(modifier = Modifier.padding(16.dp),
                     viewModel = viewModel(factory = ViewInventoryViewModel.Factory) // scoped to this particular navigation destination
                 )
             }

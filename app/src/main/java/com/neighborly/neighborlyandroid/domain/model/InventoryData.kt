@@ -1,5 +1,10 @@
 package com.neighborly.neighborlyandroid.domain.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+import java.time.LocalDateTime
+import java.time.ZonedDateTime
+
 data class AddItemDetails(
     val title:String,
     val description:String,
@@ -8,14 +13,17 @@ data class AddItemDetails(
     val dayCharge:Double
 )
 
+@Parcelize
 data class InventoryItem(
     val id:Long,
     val title: String,
     val dayCharge: Double,
     val category: Category?,
     val thumbnailUrl:String?,
-)
+):Parcelable
 
+@Parcelize
 data class InventoryItemDetail(
-    val description: String? = null
-)
+    val description: String? = null,
+    val dateAdded: ZonedDateTime? = null
+):Parcelable

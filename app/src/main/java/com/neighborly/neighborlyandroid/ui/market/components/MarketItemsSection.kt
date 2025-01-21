@@ -48,7 +48,7 @@ fun MarketItemsSection(modifier: Modifier=Modifier, itemsState: List<MarketItem>
         ) {
 
             items(items = itemsState, key = { item -> item.id }) { item ->
-                ItemCard(item, onClick = {onClickItem(it)})
+                MarketItemCard(item, onClick = {onClickItem(it)})
             }
         }
 
@@ -56,65 +56,6 @@ fun MarketItemsSection(modifier: Modifier=Modifier, itemsState: List<MarketItem>
     }
 }
 
-@Composable
-fun ItemCardDescription(item: MarketItem, modifier: Modifier){
-
-    Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
-
-        Text(item.title) // item title
-    }
-    Row(
-        modifier = Modifier
-            .fillMaxWidth(),// Make sure the Row takes the full width
-        horizontalArrangement = Arrangement.SpaceBetween // Place items at opposite ends
-    ) {
-        Text(item.ownerName)
-        Text(String.format("%.1f", item.distance) + " miles")
-
-
-    }
-    Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
-        Text("£"+item.dayCharge+" per day")
-    }
-}
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ItemCard(item: MarketItem, onClick:(item:MarketItem)->Unit,modifier:Modifier = Modifier){
-    OutlinedCard(
-        onClick = {onClick(item)} ,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-        ),
-        border = BorderStroke(1.dp, Color.Black),
-        modifier = Modifier.padding(1.dp).size(100.dp,250.dp)
-
-    ){
-        Log.i("logs","MarketItemsSection : item card: $item")
-        Column (modifier = Modifier.fillMaxSize().padding(1.dp),
-            verticalArrangement = Arrangement.SpaceBetween){
-            //Surface(modifier = Modifier.padding(1.dp)){
-            if (!item.thumbnailUrl.isNullOrEmpty()){
-                Box(modifier = Modifier.align(Alignment.CenterHorizontally),
-                    contentAlignment = Alignment.Center){
-                    ItemImage(
-                        item.thumbnailUrl.replace("127.0.0.1", "10.0.2.2"),
-                        contentDescription = item.title,
-                        modifier = Modifier.fillMaxWidth(),
-                        contentScale = ContentScale.Fit
-                    )
-
-                }
-            }else{
-                BrokenItemImage()
-            }
-
-            ItemCardDescription(item, modifier = modifier.size(100.dp, 50.dp))
-
-
-        }
-    }
-
-}
 val mockItems = List(10) { id ->
     MarketItem(
         id = id.toLong(),

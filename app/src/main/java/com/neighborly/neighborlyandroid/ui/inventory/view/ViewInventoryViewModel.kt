@@ -18,6 +18,8 @@ import com.neighborly.neighborlyandroid.domain.model.MarketItem
 import com.neighborly.neighborlyandroid.domain.model.MarketItemDetail
 import com.neighborly.neighborlyandroid.domain.repository.InventoryRepository
 import com.neighborly.neighborlyandroid.ui.market.MarketItemDetailScreenState
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -55,6 +57,9 @@ class ViewInventoryViewModel(private val inventoryRepository: InventoryRepositor
     private val _detailScreenState = MutableStateFlow<InventoryItemDetailScreenState>(
         InventoryItemDetailScreenState.Idle)
     val detailScreenState = _detailScreenState.asStateFlow() // expose it as read-only
+    init{
+        getItems()
+    }
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
@@ -68,6 +73,27 @@ class ViewInventoryViewModel(private val inventoryRepository: InventoryRepositor
                 )
             }
         }
+    }
+    fun getItems(){
+        _uiState.value = ViewInventoryScreenState.Loading
+        Log.d("logs","ViewInventoryViewModel getItems")
+        viewModelScope.launch {
+            val responseState: Deferred<Resource<List<InventoryItem>>> = async {inventoryRepository.getItems()}
+            processResponse(responseState)
+        }
+    }
+    private suspend fun processResponse(response:Deferred<Resource<List<InventoryItem>>>){
+        when (val responseState = response.await()){  // This suspends until fetchData completes
+            is Resource.Error.AccessDenied -> {_uiState.value = ViewInventoryScreenState.Error(message = "Couldn't verify credentials. Please Log in again")}
+            is Resource.Error.ClientError -> {_uiState.value = ViewInventoryScreenState.Error(message = "Something went wrong. Please try again")}
+            is Resource.Error.NetworkError -> {_uiState.value = ViewInventoryScreenState.Error(message = "Something went wrong. Check your internet")}
+            is Resource.Error.ServerError -> {_uiState.value = ViewInventoryScreenState.Error(message = "Something went wrong. Try again")}
+            is Resource.Success -> {
+                _uiState.value = ViewInventoryScreenState.Idle
+                _itemsState.value = responseState.data ?: emptyList<InventoryItem>()
+            }
+        }
+
     }
     fun getItemDetail(itemId:Long){
         _detailScreenState.value = InventoryItemDetailScreenState.Idle

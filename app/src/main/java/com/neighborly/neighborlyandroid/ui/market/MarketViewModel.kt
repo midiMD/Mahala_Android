@@ -106,7 +106,7 @@ class MarketViewModel(private val marketRepository: MarketRepository,
         // Await the result when ready
         delay(1000) // A coroutine-friendly function that suspends for 1 second
         val responseState = marketResponseState.await()  // This suspends until fetchData completes
-        _uiState.value = MarketScreenState.Loading
+        //_uiState.value = MarketScreenState.Loading
         when (responseState){
             is Resource.Error.AccessDenied -> {_uiState.value = MarketScreenState.Error(message = "Something went wrong. Log in again")}
             is Resource.Error.ClientError -> {_uiState.value = MarketScreenState.Error(message = "Something went wrong. Please try again")}

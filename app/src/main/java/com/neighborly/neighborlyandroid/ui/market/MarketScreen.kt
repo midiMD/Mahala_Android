@@ -31,7 +31,6 @@ import com.neighborly.neighborlyandroid.domain.model.SortBy
 import com.neighborly.neighborlyandroid.ui.LocalSnackbarHostState
 import com.neighborly.neighborlyandroid.ui.market.components.MarketItemsSection
 import com.neighborly.neighborlyandroid.ui.market.components.MarketTopBar
-import com.neighborly.neighborlyandroid.ui.market.item_detail.MarketItemDetailScreen
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.neighborly.neighborlyandroid.domain.model.MarketItemDetail
@@ -161,7 +160,7 @@ fun MarketScreen(modifier: Modifier = Modifier,
                     }
                 }
                 AnimatedPane {
-                    MarketItemDetailScreen(item = marketItem, itemDetail = itemDetail,
+                    MarketItemDetailScreen(item = marketItem, detail = itemDetail,
                         navigateToChat = {onChatButtonClick()},)
 
                 }

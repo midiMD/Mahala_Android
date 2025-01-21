@@ -7,5 +7,5 @@ import com.neighborly.neighborlyandroid.domain.model.InventoryItemDetail
 
 interface InventoryRepository {
     suspend fun getItemDetail(itemId: Long) : Resource<InventoryItemDetail>
-    suspend fun getInventoryItems():Resource<List<InventoryItem>>
+    suspend fun getItems():Resource<List<InventoryItem>>
 }
