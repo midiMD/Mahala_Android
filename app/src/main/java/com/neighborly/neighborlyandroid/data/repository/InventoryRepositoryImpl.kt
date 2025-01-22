@@ -21,6 +21,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okio.IOException
 class InventoryRepositoryImpl(private val inventoryService: InventoryService):InventoryRepository {
+    init {
+        Log.d("logs","Inventory Repo instantiated")
+    }
     override suspend fun getItemDetail(itemId: Long): Resource<InventoryItemDetail> {
         return withContext(Dispatchers.IO) {
             //Network and local storage IO operations should be done in IO Context

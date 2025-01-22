@@ -19,6 +19,9 @@ import okio.IOException
 
 
 class MarketRepositoryImpl(private val marketService: MarketApi): MarketRepository {
+    init{
+        Log.d("logs","MArket Repo instantiated")
+    }
     override suspend fun searchMarketItems(searchQuery: MarketQuery): Resource<List<MarketItem>> =
         withContext(Dispatchers.IO) {
             //Network and local storage IO operations should be done in IO Context
