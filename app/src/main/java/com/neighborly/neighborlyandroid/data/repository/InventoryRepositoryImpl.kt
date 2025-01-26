@@ -1,21 +1,18 @@
 package com.neighborly.neighborlyandroid.data.repository
 
-import android.os.Build
+import android.content.Context
 import android.util.Log
-import androidx.annotation.RequiresApi
 import coil3.network.HttpException
 import com.neighborly.neighborlyandroid.common.Resource
+import com.neighborly.neighborlyandroid.common.utils.prepareImagePart
+import com.neighborly.neighborlyandroid.common.utils.prepareTextPart
+import com.neighborly.neighborlyandroid.common.utils.uriToFile
 import com.neighborly.neighborlyandroid.data.network.dto.inventory.toInventoryItem
 import com.neighborly.neighborlyandroid.data.network.dto.inventory.toInventoryItemDetail
-import com.neighborly.neighborlyandroid.data.network.dto.market.MarketSearchRequest
-import com.neighborly.neighborlyandroid.data.network.dto.market.toMarketItem
-import com.neighborly.neighborlyandroid.data.network.dto.market.toMarketItemDetail
 import com.neighborly.neighborlyandroid.data.network.retrofit.InventoryService
+import com.neighborly.neighborlyandroid.domain.model.AddItemDetails
 import com.neighborly.neighborlyandroid.domain.model.InventoryItem
 import com.neighborly.neighborlyandroid.domain.model.InventoryItemDetail
-import com.neighborly.neighborlyandroid.domain.model.MarketItem
-import com.neighborly.neighborlyandroid.domain.model.MarketItemDetail
-import com.neighborly.neighborlyandroid.domain.model.MarketQuery
 import com.neighborly.neighborlyandroid.domain.repository.InventoryRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -87,4 +84,47 @@ class InventoryRepositoryImpl(private val inventoryService: InventoryService):In
                 Resource.Error.ServerError()
             }
         }
+
+
+    override suspend fun addItem(context: Context, item: AddItemDetails): Resource<Unit> =
+        withContext(Dispatchers.IO) {
+            val file = uriToFile(
+                context = context,
+                uri = item.thumbnailUri
+            )
+            val imagePart = prepareImagePart(file, "image")
+            Log.d("logs","imagePart:$imagePart")
+            val titlePart = prepareTextPart(item.title)
+            val descriptionPart =prepareTextPart(item.description)
+            val pricePart = prepareTextPart(item.dayCharge.toString())
+            val categoriesPart = prepareTextPart(item.categories.map{it.id}.joinToString(","))
+            try{
+                val response = inventoryService.uploadItem(
+                    image = imagePart,
+                    title = titlePart,
+                    description = descriptionPart,
+                    price = pricePart,
+                    categories = categoriesPart
+                )
+                if (response.isSuccessful) {
+                    Resource.Success<Unit>()
+                } else if (response.code() == 500) {
+                    //internal server error
+                    Resource.Error.ServerError<Unit>()
+                } else if (response.code() == 401 || response.code() == 403) { // unauthorized or forbidden
+                    Resource.Error.AccessDenied<Unit>()
+                } else {
+                    Resource.Error.ServerError<Unit>()
+                }
+
+            } catch (e: HttpException) {
+                Resource.Error.ClientError<Unit>()
+            } catch (e: IOException) {
+                Resource.Error.NetworkError<Unit>()
+            } catch (e:Exception) {
+                Log.e("logs",e.toString())
+                Resource.Error.ServerError<Unit>()
+            }
+
+    }
 }

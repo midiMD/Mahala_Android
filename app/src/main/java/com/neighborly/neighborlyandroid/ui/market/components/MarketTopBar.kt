@@ -15,6 +15,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import com.neighborly.neighborlyandroid.domain.model.Category
 import com.neighborly.neighborlyandroid.domain.model.SortBy
+import com.neighborly.neighborlyandroid.ui.common.CategoriesDropdown
 import com.neighborly.neighborlyandroid.ui.market.CategoryOption
 
 

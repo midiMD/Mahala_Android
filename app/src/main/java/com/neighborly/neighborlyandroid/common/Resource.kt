@@ -1,7 +1,7 @@
 package com.neighborly.neighborlyandroid.common
 // exposed to UI layer
 sealed class Resource<T>(val data: T? = null) {
-    class Success<T>(data: T) : Resource<T>(data)
+    class Success<T>(data: T? = null) : Resource<T>(data)
 //    class AccessDenied<T>():Resource<T>()
 //    class ClientError<T>():Resource<T>()
 //    class ServerError<T>():Resource<T>()

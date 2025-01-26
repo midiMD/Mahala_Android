@@ -1,4 +1,4 @@
-package com.neighborly.neighborlyandroid.ui.market.components
+package com.neighborly.neighborlyandroid.ui.common
 
 import android.util.Log
 import androidx.compose.foundation.layout.Row

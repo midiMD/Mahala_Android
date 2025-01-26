@@ -28,7 +28,6 @@ data class InventoryItemDetailResponse(
     @SerializedName("date_added") val dateAdded: String?
 )
 
-@RequiresApi(Build.VERSION_CODES.O)
 fun InventoryItemDetailResponse.toInventoryItemDetail():InventoryItemDetail =
     InventoryItemDetail(
         description=description,

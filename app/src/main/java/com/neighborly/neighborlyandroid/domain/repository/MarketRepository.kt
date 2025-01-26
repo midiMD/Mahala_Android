@@ -1,6 +1,5 @@
 package com.neighborly.neighborlyandroid.domain.repository
 
-import com.neighborly.neighborlyandroid.common.MarketItemResponseState
 import com.neighborly.neighborlyandroid.common.Resource
 import com.neighborly.neighborlyandroid.data.network.dto.market.MarketItemDetailResponse
 import com.neighborly.neighborlyandroid.data.network.dto.market.MarketItemResponse

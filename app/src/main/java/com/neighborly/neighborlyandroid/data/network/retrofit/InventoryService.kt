@@ -1,10 +1,13 @@
 package com.neighborly.neighborlyandroid.data.network.retrofit
 
 
+import android.content.Context
 import com.neighborly.neighborlyandroid.data.datastore.TokenDataStore
 import android.util.Log
 import com.neighborly.neighborlyandroid.data.network.dto.inventory.InventoryItemDetailResponse
 import com.neighborly.neighborlyandroid.data.network.dto.inventory.InventoryItemResponse
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 
 import retrofit2.Response
 
@@ -31,6 +34,23 @@ class InventoryService(private val tokenDataStore: TokenDataStore): InventoryApi
         val inventoryApi = getAuthApi()
         val response = inventoryApi.requestItemDetail(itemId)
         return response
+    }
+
+    override suspend fun uploadItem(
+        image: MultipartBody.Part,
+        title: RequestBody,
+        description: RequestBody,
+        price: RequestBody,
+        categories: RequestBody
+    ): Response<Unit> {
+        val inventoryApi = getAuthApi()
+        return inventoryApi.uploadItem(
+            image = image,
+            title = title,
+            description = description,
+            price = price,
+            categories = categories
+        )
     }
 
 }
