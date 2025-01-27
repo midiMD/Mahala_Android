@@ -1,40 +1,48 @@
 package com.neighborly.neighborlyandroid.ui.inventory.view
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.motionEventSpy
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.neighborly.neighborlyandroid.domain.model.InventoryItem
 import com.neighborly.neighborlyandroid.domain.model.InventoryItemDetail
-import com.neighborly.neighborlyandroid.ui.common.image.BrokenItemImage
+import com.neighborly.neighborlyandroid.ui.common.LoadingOverlay
 import com.neighborly.neighborlyandroid.ui.common.image.DetailScreenMainImage
-import com.neighborly.neighborlyandroid.ui.common.image.ItemImage
+import com.neighborly.neighborlyandroid.ui.inventory.components.DeleteItemDialog
 import com.neighborly.neighborlyandroid.ui.inventory.components.InventoryItemDetailFooter
 import com.neighborly.neighborlyandroid.ui.inventory.components.MoreOptionsButtonWithPopup
+import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
 @Composable
 fun InventoryItemDetailScreen(modifier: Modifier = Modifier,
+                              detailScreenState: InventoryItemDetailScreenState,
+                              snackbarHostState: SnackbarHostState,
                               item: InventoryItem,
-                              detail: InventoryItemDetail?) {
+                              detail: InventoryItemDetail?,
+                              deleteItem:(itemId:Long)->Unit,
+                              navigateToListView:()->Unit) {
+    var showDeleteDialog by remember { mutableStateOf(false) }
 
     Column (modifier = modifier.fillMaxSize().padding(1.dp),
         verticalArrangement = Arrangement.SpaceBetween){
@@ -48,8 +56,33 @@ fun InventoryItemDetailScreen(modifier: Modifier = Modifier,
                 )
             }
         }
-        MoreOptionsButtonWithPopup(modifier = Modifier.align(Alignment.End).fillMaxHeight(),onRemoveClick = {}, onEditClick = {})
+        MoreOptionsButtonWithPopup(modifier = Modifier.align(Alignment.End).fillMaxHeight(),onDeleteClick = {showDeleteDialog=true}, onEditClick = {})
+
     }
+    when(detailScreenState){
+        is InventoryItemDetailScreenState.Error -> {
+            LaunchedEffect(detailScreenState) {
+                snackbarHostState.showSnackbar(detailScreenState.message)
+            }
+        }
+        InventoryItemDetailScreenState.Idle -> {}
+        InventoryItemDetailScreenState.Loading -> {
+            LoadingOverlay()
+        }
+        InventoryItemDetailScreenState.ItemDeleted -> {
+            navigateToListView()
+        }
+    }
+    if (showDeleteDialog){
+        DeleteItemDialog(
+            hideDialog = {showDeleteDialog = false},
+            onClick = {
+                deleteItem(item.id)
+            }
+        )
+    }
+
+
 }
 
 @Composable
@@ -88,7 +121,11 @@ fun PreviewInventoryDetailScreen() {
         item = sampleItem,
         detail = sampleDetail,
         modifier = Modifier
-            .padding(0.dp) // Add some padding to the preview
+            .padding(0.dp),
+        deleteItem = TODO(),
+        navigateToListView = TODO(),
+        detailScreenState = TODO(),
+        snackbarHostState = TODO()
     )
 }
 

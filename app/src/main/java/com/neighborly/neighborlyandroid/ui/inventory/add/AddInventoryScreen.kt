@@ -1,17 +1,6 @@
 package com.neighborly.neighborlyandroid.ui.inventory.add
 
 import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContract
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandIn
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkOut
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,27 +13,22 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.neighborly.neighborlyandroid.domain.model.AddItemDetails
 import com.neighborly.neighborlyandroid.domain.model.Category
 import com.neighborly.neighborlyandroid.ui.common.CategoriesDropdown
-import com.neighborly.neighborlyandroid.ui.common.image.ListViewImage
+import com.neighborly.neighborlyandroid.ui.common.LoadingOverlay
+import com.neighborly.neighborlyandroid.ui.common.SuccessOverlay
+import com.neighborly.neighborlyandroid.ui.inventory.components.ImageUploadComponent
 import com.neighborly.neighborlyandroid.ui.market.CategoryOption
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.time.delay
+import com.neighborly.neighborlyandroid.ui.inventory.components.DiscardDialog
+import com.neighborly.neighborlyandroid.ui.inventory.components.SubmitDialog
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -97,7 +81,7 @@ private fun AddInventoryScreen(modifier: Modifier = Modifier,
 
     Scaffold(
         topBar = {
-            TopAppBarContent(
+            AddInventoryTopBar(
                 showDiscardDialog = { showDiscardDialog = true },
                 showSubmitDialog = { showSubmitDialog = true },
                 isSubmitEnabled =title.isNotBlank() && categoryState.any{category-> category.isActive} && price.isNotBlank() && thumbnailUri != null,
@@ -209,187 +193,14 @@ fun PreviewAddInventoryScreen(){
         submitItem = { TODO() })
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun TopAppBarContent(
-    showDiscardDialog: () -> Unit,
-    showSubmitDialog: () -> Unit,
-    isSubmitEnabled: Boolean
-) {
-    CenterAlignedTopAppBar(
-        title = {
-            Text(
-                text = "Add",
-                style = MaterialTheme.typography.headlineSmall
-            )
-        },
-        navigationIcon = {
-            TextButton(
-                onClick = showDiscardDialog,
-                colors = ButtonDefaults.textButtonColors(
-                    contentColor = MaterialTheme.colorScheme.error
-                )
-            ) {
-                Text("Discard")
-            }
-        },
-        actions = {
-            Button(
-                onClick = showSubmitDialog,
-                enabled = isSubmitEnabled,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
-                )
-            ) {
-                Text("Submit")
-            }
-        }
-    )
-}
-@Composable
-private fun DiscardDialog(hideDialog:()->Unit,
-                          onClick:()->Unit){
-    AlertDialog(
-        onDismissRequest = hideDialog,
-        title = { Text("Discard Changes?") },
-        text = { Text("All unsaved changes will be lost.") },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    hideDialog()
-                    onClick()
-                }
-            ) {
-                Text("Confirm", color = MaterialTheme.colorScheme.error)
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = hideDialog
-            ) {
-                Text("Cancel")
-            }
-        }
-    )
-}
-@Composable
-private fun SubmitDialog(hideDialog:()->Unit,
-                          onClick:()->Unit){
-    AlertDialog(
-        onDismissRequest = hideDialog,
-        title = { Text("Submit?") },
-        text = { },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    hideDialog()
-                    onClick()
-                }
-            ) {
-                Text("Confirm", color = MaterialTheme.colorScheme.primary)
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = hideDialog
-            ) {
-                Text("Cancel")
-            }
-        }
-    )
-}
-@Composable
-fun ImageUploadComponent(thumbnailUri:Uri?,onPick:(uri:Uri)->Unit ){
-    val photoPickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickVisualMedia(),
-        onResult = {uri->
-            if (uri != null) {
-                onPick(uri)
-            }
-        }
-    )
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .aspectRatio(1f)
-            .background(MaterialTheme.colorScheme.surfaceVariant)
-            .clickable {
-                photoPickerLauncher.launch(
-                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                )
-            },
-        contentAlignment = Alignment.Center
-    ) {
-        if (thumbnailUri == null) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add photo"
-                )
-                Text("Add Photo")
-            }
-        } else {
-            ListViewImage(thumbnailUri =thumbnailUri.toString() )
-        }
-    }
-}
-@Composable
-fun LoadingOverlay() {
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = Color.Black.copy(alpha = 0.5f)) // Semi-transparent background
-            .clickable(enabled = false, onClick = {}), // Block clicks while loading
-        contentAlignment = Alignment.Center
-    ) {
-        AnimatedVisibility(
-            visible = true,
-            enter = fadeIn() + expandIn(),
-            exit = fadeOut() + shrinkOut()
-        ) {
-            CircularProgressIndicator(
-                modifier = Modifier.fillMaxSize(0.3f),
-                color = MaterialTheme.colorScheme.primary,
-                strokeWidth = 6.dp
-            )
-        }
-    }
-}
-@Composable
-fun SuccessOverlay() {
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = Color.Black.copy(alpha = 0.5f)) // Semi-transparent background
-            .clickable(enabled = false, onClick = {}), // Block clicks while loading
-        contentAlignment = Alignment.Center
-    ) {
-        AnimatedVisibility(
-            visible = true,
-            enter = fadeIn() + expandIn(),
-            exit = fadeOut() + shrinkOut()
-        ) {
-            Icon(
-                imageVector = Icons.Filled.Check,
-                contentDescription = "Success",
-                modifier = Modifier.fillMaxSize(0.3f),
-                tint = Color.Green,
-            )
-        }
-    }
-}
 
 
 @Preview(showBackground = true, name = "Enabled Submit Button")
 @Composable
 private fun TopAppBarContentPreviewEnabled() {
     MaterialTheme {
-        TopAppBarContent(
+        AddInventoryTopBar(
             showDiscardDialog = { /* Preview doesn't need actual implementation */ },
             showSubmitDialog = { /* Preview doesn't need actual implementation */ },
             isSubmitEnabled = true

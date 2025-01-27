@@ -7,6 +7,7 @@ import com.neighborly.neighborlyandroid.data.network.dto.market.MarketItemDetail
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
@@ -21,6 +22,10 @@ interface InventoryApi{
     suspend fun requestItemDetail(
         @Query("id") itemId: Long
     ): Response<InventoryItemDetailResponse>
+    @DELETE("inventory/items/delete")
+    suspend fun deleteItem(
+        @Query("id") itemId:Long
+    ):Response<Unit>
     @POST("/inventory/upload")
     @Multipart
     suspend fun uploadItem(

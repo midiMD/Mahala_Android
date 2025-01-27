@@ -58,7 +58,6 @@ class InventoryRepositoryImpl(private val inventoryService: InventoryService):In
     override suspend fun getItems(): Resource<List<InventoryItem>> =
         withContext(Dispatchers.IO) {
             //Network and local storage IO operations should be done in IO Context
-            //var responseState: MarketResponseState
             try {
                 val response =
                     inventoryService.requestItems()
@@ -126,5 +125,35 @@ class InventoryRepositoryImpl(private val inventoryService: InventoryService):In
                 Resource.Error.ServerError<Unit>()
             }
 
+    }
+    override suspend fun deleteItem(itemId:Long):Resource<Unit> =
+        withContext(Dispatchers.IO){
+            try {
+                val response =
+                    inventoryService.deleteItem(itemId)
+                if (response.isSuccessful) {
+                    Log.i("logs","Inventory Item  deleted succesfully: $itemId")
+                    Resource.Success<Unit>()
+                } else if (response.code() == 401 || response.code() == 403) { // unauthorized or forbidden
+                    Resource.Error.AccessDenied<Unit>()
+                } else {
+                    Resource.Error.ServerError<Unit>()
+                }
+            } catch (e: HttpException) {
+                Resource.Error.ClientError<Unit>()
+            } catch (e: IOException) {
+                Resource.Error.NetworkError<Unit>()
+            } catch (e:Exception) {
+                Log.e("logs",e.toString())
+                Resource.Error.ServerError()
+            }
+        }
+
+    override suspend fun updateItem(
+        context: Context,
+        itemId: Long,
+        item: AddItemDetails
+    ): Resource<Unit> {
+        TODO("Not yet implemented")
     }
 }

@@ -37,6 +37,8 @@ sealed class InventoryItemDetailScreenState{
     data object Idle:InventoryItemDetailScreenState()
     //Error
     data class Error(val message:String): InventoryItemDetailScreenState()
+    data object Loading:InventoryItemDetailScreenState()
+    data object ItemDeleted:InventoryItemDetailScreenState()
 
 }
 
@@ -59,6 +61,7 @@ class ViewInventoryViewModel(private val inventoryRepository: InventoryRepositor
     val detailScreenState = _detailScreenState.asStateFlow() // expose it as read-only
     init{
         getItems()
+        Log.i("logs","ViewInventory View Model initialised")
     }
 
     companion object {
@@ -107,6 +110,25 @@ class ViewInventoryViewModel(private val inventoryRepository: InventoryRepositor
                 is Resource.Error.ServerError -> {_detailScreenState.value = InventoryItemDetailScreenState.Error(message = "Something went wrong. Try again")}
                 is Resource.Success -> {
                     _itemDetailState.value = responseState.data ?: InventoryItemDetail()
+                }
+            }
+        }
+
+    }
+    fun deleteItem(itemId:Long){
+        _detailScreenState.value = InventoryItemDetailScreenState.Loading
+        Log.i("logs","ViewInventoryViewModel deleteItem")
+        viewModelScope.launch {
+            val responseState: Resource<Unit> = inventoryRepository.deleteItem(itemId)
+            Log.d("logs","deleteItem response state: $responseState")
+            when (responseState){
+                is Resource.Error.AccessDenied -> {_detailScreenState.value = InventoryItemDetailScreenState.Error(message = "Couldn't fetch detail. Try again.")}
+                is Resource.Error.ClientError -> {_detailScreenState.value = InventoryItemDetailScreenState.Error(message = "Something went wrong. Please try again")}
+                is Resource.Error.NetworkError -> {_detailScreenState.value = InventoryItemDetailScreenState.Error(message = "Something went wrong. Check your internet")}
+                is Resource.Error.ServerError -> {_detailScreenState.value = InventoryItemDetailScreenState.Error(message = "Something went wrong. Try again")}
+                is Resource.Success -> {
+                    _detailScreenState.value = InventoryItemDetailScreenState.ItemDeleted
+                    getItems()
                 }
             }
         }

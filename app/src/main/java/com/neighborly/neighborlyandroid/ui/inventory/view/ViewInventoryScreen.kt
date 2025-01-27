@@ -10,6 +10,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.layout.AnimatedPane
+import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldDefaults
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
@@ -29,9 +30,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.neighborly.neighborlyandroid.domain.model.InventoryItem
 import com.neighborly.neighborlyandroid.domain.model.InventoryItemDetail
 import com.neighborly.neighborlyandroid.ui.LocalSnackbarHostState
+import com.neighborly.neighborlyandroid.ui.common.LoadingOverlay
 import com.neighborly.neighborlyandroid.ui.inventory.components.InventoryItemsSection
 
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
@@ -46,6 +49,8 @@ fun ViewInventoryScreen(modifier: Modifier,viewModel:ViewInventoryViewModel = vi
         adaptStrategies = ListDetailPaneScaffoldDefaults.adaptStrategies(),
     )
     val coroutineScope = rememberCoroutineScope()
+    val itemDetail: InventoryItemDetail by viewModel.itemDetailState.collectAsStateWithLifecycle()
+    val itemDetailScreenState: InventoryItemDetailScreenState by viewModel.detailScreenState.collectAsStateWithLifecycle()
 
     NavigableListDetailPaneScaffold(
         modifier = modifier,
@@ -55,6 +60,7 @@ fun ViewInventoryScreen(modifier: Modifier,viewModel:ViewInventoryViewModel = vi
                 InventoryListScreen(
                     items = items, uiState = uiState, snackbarHostState = snackbarHostState,
                     navigateToItemDetail = {item:InventoryItem ->
+                        viewModel.getItemDetail(item.id)
                         coroutineScope.launch {
                             navigator.navigateTo(
                                 pane = ListDetailPaneScaffoldRole.Detail, item
@@ -70,19 +76,21 @@ fun ViewInventoryScreen(modifier: Modifier,viewModel:ViewInventoryViewModel = vi
             val content = navigator.currentDestination?.contentKey
             if (content != null){
                 val inventoryItem: InventoryItem =  content as InventoryItem
-                val itemDetail: InventoryItemDetail by viewModel.itemDetailState.collectAsStateWithLifecycle()
-                val itemDetailScreenState: InventoryItemDetailScreenState by viewModel.detailScreenState.collectAsStateWithLifecycle()
-                viewModel.getItemDetail(inventoryItem.id)
-                LaunchedEffect(itemDetailScreenState) {
-                    when(itemDetailScreenState){
-                        is InventoryItemDetailScreenState.Error -> {
-                            snackbarHostState.showSnackbar((itemDetailScreenState as InventoryItemDetailScreenState.Error).message)
-                        }
-                        InventoryItemDetailScreenState.Idle -> {}
-                    }
-                }
                 AnimatedPane {
-                    InventoryItemDetailScreen(item = inventoryItem, detail = itemDetail)
+                    InventoryItemDetailScreen(
+                        item = inventoryItem, detail = itemDetail,
+                        detailScreenState= itemDetailScreenState,
+                        modifier =modifier,
+                        deleteItem = viewModel::deleteItem,
+                        snackbarHostState = snackbarHostState,
+                        navigateToListView = {
+                            coroutineScope.launch {
+                                navigator.navigateTo(
+                                    pane = ListDetailPaneScaffoldRole.List
+                                )
+                            }
+                        }
+                    )
 
                 }
             }

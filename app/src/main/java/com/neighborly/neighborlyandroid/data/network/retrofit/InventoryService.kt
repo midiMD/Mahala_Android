@@ -36,6 +36,12 @@ class InventoryService(private val tokenDataStore: TokenDataStore): InventoryApi
         return response
     }
 
+    override suspend fun deleteItem(itemId: Long): Response<Unit> {
+        val inventoryApi = getAuthApi()
+        val response = inventoryApi.deleteItem(itemId)
+        return response
+    }
+
     override suspend fun uploadItem(
         image: MultipartBody.Part,
         title: RequestBody,

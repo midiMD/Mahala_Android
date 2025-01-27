@@ -36,7 +36,7 @@ import androidx.compose.ui.window.Popup
 fun MoreOptionsButtonWithPopup(
     modifier: Modifier = Modifier,
     onEditClick: () -> Unit,
-    onRemoveClick: () -> Unit
+    onDeleteClick: () -> Unit
 ) {
     var showPopup by remember { mutableStateOf(false) } // State to control popup visibility
 
@@ -94,7 +94,7 @@ fun MoreOptionsButtonWithPopup(
                                 .fillMaxWidth()
                                 .clickable {
                                     showPopup = false
-                                    onRemoveClick()
+                                    onDeleteClick()
                                 }
                                 .padding(12.dp),
                             verticalAlignment = Alignment.CenterVertically
@@ -115,6 +115,6 @@ fun MoreOptionsButtonWithPopup(
 @Preview(showBackground = true)
 @Composable
 fun PreviewPopUp(){
-    MoreOptionsButtonWithPopup(onEditClick = {}, onRemoveClick = {}
+    MoreOptionsButtonWithPopup(onEditClick = {}, onDeleteClick = {}
     )
 }
