@@ -28,6 +28,7 @@ import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -49,7 +50,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.neighborly.neighborlyandroid.R
 import com.neighborly.neighborlyandroid.ui.LocalSnackbarHostState
+import com.neighborly.neighborlyandroid.ui.common.LoadingOverlay
 import com.neighborly.neighborlyandroid.ui.common.LoadingSpinner
+import com.neighborly.neighborlyandroid.ui.common.SuccessOverlay
 import com.neighborly.neighborlyandroid.ui.common.SuccessTick
 import com.neighborly.neighborlyandroid.ui.common.showSnackbar
 import com.neighborly.neighborlyandroid.ui.login.components.AccountQueryComponent
@@ -71,73 +74,15 @@ fun LoginScreen(onNavigateToRegister:()->Unit,
 
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = LocalSnackbarHostState.current
-    Surface(
-        color = Color.White,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .padding(28.dp)
-    ) {
-        Column(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Column {
-                HeadingTextComponent(value = "Welcome Back")
-            }
-            Spacer(modifier = Modifier.height(25.dp))
-            when(uiState){
-                LoginScreenState.Idle,
-                LoginScreenState.Error.InvalidCredentials,
-                LoginScreenState.Error.InvalidEmail,
-                LoginScreenState.Error.NetworkError,
-                LoginScreenState.Error.MissingFields -> {
-                    LoginFormAndButton(
-                        onClickLogin = viewModel::onLoginButtonPress,
-                        onClickGoogleLogin = { Log.i("logs","Auth with google ")},
-                        onNavigateToRegister = onNavigateToRegister,
-                        onNavigateToResetPassword = onNavigateToResetPassword
-                    )
-                    LaunchedEffect(uiState){
-                        when(uiState){
-                            LoginScreenState.Error.InvalidCredentials -> {
-                                showSnackbar( snackbarHostState, "Invalid Credentials")
-                            }
-                            LoginScreenState.Error.InvalidEmail -> {
-                                showSnackbar(snackbarHostState, "Invalid Email")
-                            }
-                            LoginScreenState.Error.MissingFields -> {
-                                showSnackbar( snackbarHostState, "Fill all fields")
-                            }
-                            LoginScreenState.Error.NetworkError -> {
-                                showSnackbar( snackbarHostState, "Network error")
-                            }
-
-                            else -> {}
-                        }
-                        viewModel.toggleIdle()
-                    }
-                }
-
-                LoginScreenState.Loading -> {
-                    Box(modifier = Modifier.fillMaxSize()){
-                        LoadingSpinner(modifier = Modifier.align(Alignment.Center))
-                    }
-                }
-                LoginScreenState.Success ->{
-                    AnimatedVisibility(
-                        visible = true,
-                        enter = fadeIn() + scaleIn(),
-                        exit = fadeOut() + scaleOut()
-                    ) {
-                        SuccessTick()
-                    }
-                    navigateToMarket()
-
-                }
-            }
-
-        }
-    }
+    LoginScreen(
+        uiState = uiState,
+        snackbarHostState = snackbarHostState,
+        onClickLogin = viewModel::onLoginButtonPress,
+        onNavigateToRegister = onNavigateToRegister,
+        onNavigateToResetPassword = onNavigateToResetPassword,
+        toggleIdle = viewModel::toggleIdle,
+        navigateToMarket = navigateToMarket
+    )
 }
 @Composable
 fun LoginFormAndButton(
@@ -241,11 +186,9 @@ fun LoginFormAndButton(
         }
     }
 }
-
-@Preview(showBackground = true)
 @Composable
-fun PreviewLoginScreen() {
-    // Example UI state and constants
+internal fun LoginScreen(snackbarHostState: SnackbarHostState,uiState:LoginScreenState,onClickLogin:(String,String)->Unit,onNavigateToRegister: () -> Unit,onNavigateToResetPassword: () -> Unit,
+                         toggleIdle:()->Unit,navigateToMarket:()->Unit){
     Surface(
         color = Color.White,
         modifier = Modifier
@@ -260,12 +203,52 @@ fun PreviewLoginScreen() {
                 HeadingTextComponent(value = "Welcome Back")
             }
             Spacer(modifier = Modifier.height(25.dp))
-             LoginFormAndButton(
-                onClickLogin = { a,b ->TODO() },
-                onClickGoogleLogin = { Log.i("Preview", "Auth with Google") },
-                onNavigateToRegister = { /* Example Register Navigation Action */ },
-                onNavigateToResetPassword = { /* Example Reset Password Navigation Action */ }
+            LoginFormAndButton(
+                onClickLogin = onClickLogin,
+                onClickGoogleLogin = { Log.i("logs","Auth with google ")},
+                onNavigateToRegister = onNavigateToRegister,
+                onNavigateToResetPassword = onNavigateToResetPassword
             )
+            LaunchedEffect(uiState){
+                when(uiState){
+                    is LoginScreenState.Error -> {
+                        snackbarHostState.showSnackbar(message = uiState.message)
+                        toggleIdle()
+                    }
+                    else -> {}
+                }
+
+            }
         }
     }
+    when(uiState){
+
+
+        LoginScreenState.Loading -> {
+            LoadingOverlay()
+        }
+        LoginScreenState.Success ->{
+            SuccessOverlay()
+            Log.i("logs","Navigating to Market from Login Screen")
+            toggleIdle()
+            navigateToMarket()
+
+        }
+
+        else -> {}
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewLoginScreen() {
+    LoginScreen(
+        uiState = LoginScreenState.Success,
+        snackbarHostState = SnackbarHostState(),
+        onClickLogin = {a,b->Log.i("logs","asda")},
+        onNavigateToRegister = {},
+        onNavigateToResetPassword = {},
+        toggleIdle = { },
+        navigateToMarket = {}
+    )
 }

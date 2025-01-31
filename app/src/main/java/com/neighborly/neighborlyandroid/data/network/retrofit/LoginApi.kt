@@ -24,4 +24,6 @@ interface LoginApi{
     suspend fun passwordReset(@Body request: PasswordResetRequest): Response<Unit>
     @POST("register/")
     suspend fun register(@Body request: RegisterRequest):Response<Unit>
+    @POST("auth/")
+    suspend fun authorizeAuthToken():Response<Unit>
 }

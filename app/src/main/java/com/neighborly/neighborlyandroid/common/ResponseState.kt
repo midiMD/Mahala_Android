@@ -51,3 +51,14 @@ sealed class RegisterResponseState{
         data object InvalidHouseError: Error()
     }
 }
+
+sealed class PasswordChangeResponseState{
+    data object Success: PasswordChangeResponseState()
+    sealed class Error: PasswordChangeResponseState(){
+        data object IncorrectPassword: Error()
+        data object AccessDenied:Error()
+        data object ServerError: Error() // error on server side
+        data object ClientError: Error() // error on client side
+        data object NetworkError: Error()
+    }
+}

@@ -22,10 +22,12 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavOptions
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navOptions
 import com.neighborly.neighborlyandroid.ui.login.LoginScreen
 import com.neighborly.neighborlyandroid.ui.market.MarketScreen
 import com.neighborly.neighborlyandroid.ui.register.RegistrationScreen
@@ -44,6 +46,8 @@ import com.neighborly.neighborlyandroid.ui.login.LoginViewModel
 import com.neighborly.neighborlyandroid.ui.login.reset.PasswordResetScreen
 import com.neighborly.neighborlyandroid.ui.login.reset.PasswordResetViewModel
 import com.neighborly.neighborlyandroid.ui.market.MarketViewModel
+import com.neighborly.neighborlyandroid.ui.settings.SettingsHomeScreen
+import com.neighborly.neighborlyandroid.ui.settings.SettingsViewModel
 import kotlin.reflect.KClass
 import kotlinx.serialization.Serializable
 
@@ -58,7 +62,10 @@ import kotlinx.serialization.Serializable
 @Serializable data object InventoryHomeRoute
 @Serializable data object InventoryViewRoute
 @Serializable data object InventoryAddRoute
-@Serializable data object SettingsRoute
+@Serializable data object SettingsBaseRoute
+@Serializable data object SettingsHomeRoute
+@Serializable data object PasswordChangeRoute
+
 
 @Composable
 fun MahalaNavHost(appState: MahalaAppState){
@@ -129,7 +136,7 @@ fun MahalaNavHost(appState: MahalaAppState){
             }
 
             composable<InventoryViewRoute>{backStackEntry->
-                ViewInventoryScreen(modifier = Modifier.padding(16.dp),
+                ViewInventoryScreen(modifier = Modifier.padding(0.dp),
                     viewModel = viewModel(factory = ViewInventoryViewModel.Factory) // scoped to this particular navigation destination
                 )
             }
@@ -141,6 +148,37 @@ fun MahalaNavHost(appState: MahalaAppState){
                     )
                 )
             }
+        }
+        navigation<SettingsBaseRoute>(startDestination = SettingsHomeRoute){
+            composable<SettingsHomeRoute> { backStackEntry ->
+                val parentEntry = remember(backStackEntry) {
+                    navController.getBackStackEntry(SettingsBaseRoute)
+                }
+                val navOptions = navOptions {
+                    // Pop up to the start destination of the graph to
+                    // avoid building up a large stack of destinations
+                    // on the back stack as users select items
+                    popUpTo(navController.graph.findStartDestination().id) { // pop everything out. Note: This kills all view models for the screens
+                        saveState = true
+                        inclusive=true
+                    }
+                    // Avoid multiple copies of the same destination when
+                    // reselecting the same item
+                    launchSingleTop = true
+                    // Restore state when reselecting a previously selected item
+                    restoreState = true
+                }
+                val viewModel:SettingsViewModel = viewModel(parentEntry, factory = SettingsViewModel.Factory)
+                SettingsHomeScreen(
+                    modifier = Modifier,
+                    viewModel = viewModel,
+                    navigateToLogin = {
+                        navController.navigate(LoginRoute,navOptions) // navigate to login page and empty the backstack
+                    }
+                )
+            }
+
+
         }
 
 
@@ -157,7 +195,7 @@ fun NavController.navigateToConvo(convoId: Long, navOptions: NavOptionsBuilder.(
         navOptions()
     }
 }
-fun NavController.navigateToSettings(navOptions: NavOptions) = navigate(route = SettingsRoute, navOptions)
+fun NavController.navigateToSettingsHome(navOptions: NavOptions) = navigate(route = SettingsBaseRoute,navOptions)
 
 
 fun NavDestination?.isRouteInHierarchy(route: KClass<*>) =
@@ -192,6 +230,6 @@ enum class TopLevelDestination(
     SETTINGS(
         selectedIcon = Icons.Filled.Settings,
         unselectedIcon = Icons.Outlined.Settings,
-        route = SettingsRoute::class,
+        route = SettingsBaseRoute::class,
     ),
 }

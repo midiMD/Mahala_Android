@@ -26,6 +26,7 @@ import com.neighborly.neighborlyandroid.ui.navigation.TopLevelDestination
 import com.neighborly.neighborlyandroid.ui.navigation.navigateToChatHome
 import com.neighborly.neighborlyandroid.ui.navigation.navigateToInventoryHome
 import com.neighborly.neighborlyandroid.ui.navigation.navigateToMarket
+import com.neighborly.neighborlyandroid.ui.navigation.navigateToSettingsHome
 import kotlinx.coroutines.flow.debounce
 
 
@@ -69,10 +70,12 @@ class MahalaAppState(
             } ?: previousDestination.value
         }
     val topLevelDestinations: List<TopLevelDestination> = TopLevelDestination.entries
+
     fun navigateToTopLevelDestination(topLevelDestination: TopLevelDestination) {
         Log.d("logs","Navigating to tol level destination: $topLevelDestination")
         Log.d("logs","popping up to : ${navController.graph.findStartDestination()}")
         Log.d("logs","Backstack: ${navController.graph.hierarchy.toList()}")
+
         val topLevelNavOptions = navOptions {
             // Pop up to the start destination of the graph to
             // avoid building up a large stack of destinations
@@ -87,12 +90,11 @@ class MahalaAppState(
             // Restore state when reselecting a previously selected item
             restoreState = true
         }
-
         when (topLevelDestination) {
             TopLevelDestination.MARKET -> {navController.navigateToMarket(topLevelNavOptions)}
             TopLevelDestination.INVENTORY -> {navController.navigateToInventoryHome(topLevelNavOptions)}
             TopLevelDestination.CHAT -> {navController.navigateToChatHome(topLevelNavOptions)}
-            TopLevelDestination.SETTINGS -> TODO()
+            TopLevelDestination.SETTINGS -> {navController.navigateToSettingsHome(topLevelNavOptions)}
         }
 
     }

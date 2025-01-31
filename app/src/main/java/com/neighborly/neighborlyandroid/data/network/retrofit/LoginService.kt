@@ -17,25 +17,9 @@ import retrofit2.http.POST
 
 // TODO:
 //
-class LoginService(
-    //private val tokenDataStore: TokenDataStore
+class LoginService(private val tokenDataStore: TokenDataStore
 ) : LoginApi {
-//    companion object {
-//        private const val BASE_URL = "http://10.0.2.2:8000/"
-//    }
-//
-//    private val loggingInterceptor =
-//        HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
-//    private val okHttpClient = OkHttpClient.Builder()
-//        .addInterceptor(loggingInterceptor)
-//        .build()
-//    private val retrofit = Retrofit.Builder()
-//        .baseUrl(BASE_URL)
-//        .addConverterFactory(GsonConverterFactory.create())
-//        .client(okHttpClient)
-//        .build()
-//
-//    private val apiService = retrofit.create(UnAuthApiService::class.java)
+
     private val retrofit = RetrofitClient().getClient()
     private val loginApi = retrofit.create(LoginApi::class.java)
 
@@ -67,5 +51,17 @@ class LoginService(
 
         return response
     }
+
+
+
+    @POST("auth/")
+    override suspend fun authorizeAuthToken(): Response<Unit> {
+        val token = tokenDataStore.getToken() // Directly assign the result
+        val retrofit = AuthRetrofitClient(token= token ).getClient()
+        val api = retrofit.create(LoginApi::class.java)
+        val response = api.authorizeAuthToken()
+        return response
+    }
+
 }
 

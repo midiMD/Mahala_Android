@@ -6,7 +6,7 @@ sealed class Resource<T>(val data: T? = null) {
 //    class ClientError<T>():Resource<T>()
 //    class ServerError<T>():Resource<T>()
     sealed class Error<T>():Resource<T>(){
-        class AccessDenied<T>():Error<T>()
+        class AccessDenied<T>():Error<T>() // usually auth token has been corrupted. USually should result in Log out
         class ClientError<T>():Error<T>()
         class ServerError<T>():Error<T>()
         class NetworkError<T>():Error<T>()
