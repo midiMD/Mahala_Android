@@ -16,6 +16,7 @@ class SettingsService(private val tokenDataStore: TokenDataStore):SettingsApi {
         val api = getAuthApi()
         val response = api.logout()
         Log.i("logs","SettingsService.logout")
+        tokenDataStore.clearToken()
         return response
     }
 

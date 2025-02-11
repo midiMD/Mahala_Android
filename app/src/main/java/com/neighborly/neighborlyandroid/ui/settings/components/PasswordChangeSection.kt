@@ -92,7 +92,7 @@ fun PasswordChangeSection(onConfirm:(oldPassword:String,newPassword:String)->Uni
             Button(
                 onClick = { showConfirmation = true },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = oldPassword.isNotEmpty() && newPassword.length >= 8
+                enabled = oldPassword.isNotEmpty() && newPassword.isNotEmpty()
             ) {
                 Text("Change Password")
             }

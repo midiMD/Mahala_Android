@@ -4,13 +4,15 @@ import android.util.Log
 import coil3.network.HttpException
 import com.google.gson.Gson
 import com.neighborly.neighborlyandroid.data.datastore.TokenDataStore
-import com.neighborly.neighborlyandroid.common.LoginResponseState
 import com.neighborly.neighborlyandroid.common.ResetPasswordResponseState
 import com.neighborly.neighborlyandroid.common.Resource
 import com.neighborly.neighborlyandroid.data.network.dto.ApiErrorResponse
 import com.neighborly.neighborlyandroid.data.network.dto.authentication.LoginRequest
 import com.neighborly.neighborlyandroid.data.network.dto.authentication.PasswordResetRequest
+import com.neighborly.neighborlyandroid.data.network.dto.authentication.toUserStatus
 import com.neighborly.neighborlyandroid.data.network.retrofit.LoginService
+import com.neighborly.neighborlyandroid.domain.model.User
+import com.neighborly.neighborlyandroid.domain.model.UserStatus
 import com.neighborly.neighborlyandroid.domain.repository.LoginRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -20,7 +22,7 @@ import okio.IOException
 
 class LoginRepositoryImpl(private val apiService: LoginService,
                       private val tokenDataStore: TokenDataStore): LoginRepository {
-    override suspend fun login(email: String, password: String): LoginResponseState =
+    override suspend fun login(email: String, password: String): Resource<UserStatus> =
         withContext(Dispatchers.IO) {
             //Network and local storage IO operations should be done in IO Context
 
@@ -29,27 +31,27 @@ class LoginRepositoryImpl(private val apiService: LoginService,
                 if (response.isSuccessful) {
 
                     val successResponse = response.body()
-                    val token: String = successResponse?.Token ?: ""
+                    val token: String = successResponse?.token ?: ""
                     runBlocking {
                         tokenDataStore.saveToken(token)
 
                     }
                     Log.i("logs", "Login Succesful, auth token stored : " + token)
-                    LoginResponseState.Success
+                    Resource.Success(data = successResponse!!.toUserStatus())
                 } else {
                     val apiError = Gson().fromJson(
                         response.errorBody()!!.string(),
                         ApiErrorResponse::class.java
                     )
                     if (apiError.type == "client_error" && apiError.errors[0].code == "not_authenticated") {
-                        LoginResponseState.Error.AccessDenied
+                        Resource.Error.AccessDenied()
                     } else {
-                        LoginResponseState.Error.ServerError
+                        Resource.Error.ServerError()
                     }
                 }
             } catch (e: Exception) {
                 e.message?.let { Log.d("logs", "LoginRepository Error : " + it) }
-                LoginResponseState.Error.ServerError
+                Resource.Error.ServerError()
             }
 
 
@@ -80,30 +82,30 @@ class LoginRepositoryImpl(private val apiService: LoginService,
             }
         }
 
-    override suspend fun validateAuthtoken(): Resource<Unit> = withContext(Dispatchers.IO) {
+    override suspend fun validateAuthtoken(): Resource<UserStatus> = withContext(Dispatchers.IO) {
         val token = tokenDataStore.getToken()
 
         if (token.isNullOrEmpty()) {
-            Resource.Error.AccessDenied<Unit>()
+            Resource.Error.AccessDenied<UserStatus>()
         } else {
             try {
                 val response =
-                    apiService.authorizeAuthToken()
+                    apiService.validateAuthToken()
                 if (response.isSuccessful) {
                     Log.i("logs", "LoginRepo Auth Token validated : $token")
-                    Resource.Success<Unit>()
+                    Resource.Success(response.body()!!.toUserStatus())
                 } else if (response.code() == 401 || response.code() == 403) { // unauthorized or forbidden
-                    Resource.Error.AccessDenied<Unit>()
+                    Resource.Error.AccessDenied<UserStatus>()
                 } else {
-                    Resource.Error.ServerError<Unit>()
+                    Resource.Error.ServerError<UserStatus>()
                 }
             } catch (e: HttpException) {
-                Resource.Error.ClientError<Unit>()
+                Resource.Error.ClientError<UserStatus>()
             } catch (e: IOException) {
-                Resource.Error.NetworkError<Unit>()
+                Resource.Error.NetworkError<UserStatus>()
             } catch (e: Exception) {
                 Log.e("logs", e.toString())
-                Resource.Error.ServerError()
+                Resource.Error.ServerError<UserStatus>()
             }
         }
     }

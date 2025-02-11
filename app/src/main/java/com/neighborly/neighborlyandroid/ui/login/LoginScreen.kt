@@ -1,11 +1,6 @@
 package com.neighborly.neighborlyandroid.ui.login
 
 import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -46,21 +41,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.neighborly.neighborlyandroid.R
 import com.neighborly.neighborlyandroid.ui.LocalSnackbarHostState
 import com.neighborly.neighborlyandroid.ui.common.LoadingOverlay
-import com.neighborly.neighborlyandroid.ui.common.LoadingSpinner
 import com.neighborly.neighborlyandroid.ui.common.SuccessOverlay
-import com.neighborly.neighborlyandroid.ui.common.SuccessTick
-import com.neighborly.neighborlyandroid.ui.common.showSnackbar
 import com.neighborly.neighborlyandroid.ui.login.components.AccountQueryComponent
 import com.neighborly.neighborlyandroid.ui.login.components.HeadingTextComponent
 import com.neighborly.neighborlyandroid.ui.login.components.MyTextFieldComponent
 import com.neighborly.neighborlyandroid.ui.login.components.PasswordTextFieldComponent
 import com.neighborly.neighborlyandroid.ui.login.components.ResetPasswordQuery
-
 import com.neighborly.neighborlyandroid.ui.theme.AccentColor
 import com.neighborly.neighborlyandroid.ui.theme.GrayColor
 import com.neighborly.neighborlyandroid.ui.theme.Secondary
@@ -69,8 +59,7 @@ import com.neighborly.neighborlyandroid.ui.theme.Secondary
 fun LoginScreen(onNavigateToRegister:()->Unit,
                 navigateToMarket:()->Unit,
                 onNavigateToResetPassword:()->Unit,
-                viewModel:LoginViewModel = viewModel(factory = LoginViewModel.Factory),
-                ) {
+                viewModel:LoginViewModel = viewModel(factory = LoginViewModel.Factory)) {
 
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = LocalSnackbarHostState.current
@@ -81,8 +70,7 @@ fun LoginScreen(onNavigateToRegister:()->Unit,
         onNavigateToRegister = onNavigateToRegister,
         onNavigateToResetPassword = onNavigateToResetPassword,
         toggleIdle = viewModel::toggleIdle,
-        navigateToMarket = navigateToMarket
-    )
+        navigateToMarket = navigateToMarket)
 }
 @Composable
 fun LoginFormAndButton(
@@ -223,16 +211,18 @@ internal fun LoginScreen(snackbarHostState: SnackbarHostState,uiState:LoginScree
     }
     when(uiState){
 
-
         LoginScreenState.Loading -> {
             LoadingOverlay()
         }
-        LoginScreenState.Success ->{
+        LoginScreenState.AddressVerified ->{
             SuccessOverlay()
             Log.i("logs","Navigating to Market from Login Screen")
             toggleIdle()
             navigateToMarket()
 
+        }
+        LoginScreenState.AddressNotVerified->{
+            UnverifiedAddressScreen({toggleIdle()})
         }
 
         else -> {}
@@ -243,12 +233,12 @@ internal fun LoginScreen(snackbarHostState: SnackbarHostState,uiState:LoginScree
 @Composable
 fun PreviewLoginScreen() {
     LoginScreen(
-        uiState = LoginScreenState.Success,
+        uiState = LoginScreenState.AddressVerified,
         snackbarHostState = SnackbarHostState(),
         onClickLogin = {a,b->Log.i("logs","asda")},
         onNavigateToRegister = {},
         onNavigateToResetPassword = {},
         toggleIdle = { },
-        navigateToMarket = {}
+        navigateToMarket = {},
     )
 }

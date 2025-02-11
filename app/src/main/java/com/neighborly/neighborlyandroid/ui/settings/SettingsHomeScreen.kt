@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -27,6 +28,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.neighborly.neighborlyandroid.ui.LocalSnackbarHostState
 import com.neighborly.neighborlyandroid.ui.common.ConfirmationDialog
+import com.neighborly.neighborlyandroid.ui.common.LoadingOverlay
+import com.neighborly.neighborlyandroid.ui.common.SuccessOverlay
 import com.neighborly.neighborlyandroid.ui.common.showSnackbar
 import com.neighborly.neighborlyandroid.ui.settings.components.PasswordChangeSection
 import com.neighborly.neighborlyandroid.ui.settings.components.SettingsItem
@@ -52,9 +55,11 @@ fun SettingsHomeScreen(
         }
     }
     SettingsHomeScreen(modifier = modifier,
-        onLogOut = {navigateToLogin()
+        uiState = uiState,
+        onLogOut = {
             viewModel.logout()
         },
+        navigateToLogin = navigateToLogin,
         showSnackbarMessage= {snackbarMessage = it},
         changePassword = viewModel::changePassword
         )
@@ -62,6 +67,8 @@ fun SettingsHomeScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SettingsHomeScreen(modifier: Modifier = Modifier,
+                               navigateToLogin: () -> Unit,
+                               uiState: SettingsScreenState,
                                showSnackbarMessage : (String)->Unit,
                                onLogOut:()->Unit,
                                changePassword:(oldPassword:String,newPassword:String)->Unit
@@ -70,6 +77,23 @@ private fun SettingsHomeScreen(modifier: Modifier = Modifier,
     var showLogoutDialog by rememberSaveable { mutableStateOf(false) }
     var showPasswordChange by rememberSaveable { mutableStateOf(false) }
     var showEmailChange by rememberSaveable { mutableStateOf(false) }
+
+    when(uiState){
+        is SettingsScreenState.Error -> {
+            showSnackbarMessage(uiState.message)
+        }
+        SettingsScreenState.Idle -> {}
+        SettingsScreenState.Loading -> {
+            LoadingOverlay()
+        }
+        SettingsScreenState.Success -> {
+            SuccessOverlay()
+        }
+
+        SettingsScreenState.Logout -> {
+            navigateToLogin()
+        }
+    }
 
     if (showPasswordChange){
         PasswordChangeSection(
@@ -135,9 +159,9 @@ private fun SettingsHomeScreen(modifier: Modifier = Modifier,
 
 }
 
-@Preview(showBackground = true)
-@Composable
-fun PreviewHomeScreen(){
-    SettingsHomeScreen(modifier = Modifier, showSnackbarMessage = TODO(), changePassword = TODO(),
-        onLogOut = {})
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun PreviewHomeScreen(){
+//    SettingsHomeScreen(modifier = Modifier, showSnackbarMessage = TODO(), changePassword = TODO(),
+//        onLogOut = {})
+//}

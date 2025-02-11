@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.neighborly.neighborlyandroid.BaseApplication
+import com.neighborly.neighborlyandroid.common.PasswordChangeResponseState
 import com.neighborly.neighborlyandroid.common.Resource
 import com.neighborly.neighborlyandroid.domain.model.InventoryItemDetail
 import com.neighborly.neighborlyandroid.domain.repository.InventoryRepository
@@ -16,6 +17,7 @@ import com.neighborly.neighborlyandroid.domain.repository.SettingsRepository
 import com.neighborly.neighborlyandroid.ui.inventory.view.InventoryItemDetailScreenState
 import com.neighborly.neighborlyandroid.ui.inventory.view.ViewInventoryScreenState
 import com.neighborly.neighborlyandroid.ui.inventory.view.ViewInventoryViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -24,6 +26,7 @@ sealed class SettingsScreenState{
     data object Idle : SettingsScreenState()
     data object Logout: SettingsScreenState()
     data object Loading: SettingsScreenState()
+    data object Success:SettingsScreenState()
     //Error
     data class Error(val message:String): SettingsScreenState()
 
@@ -53,7 +56,7 @@ class SettingsViewModel(private val repository: SettingsRepository,
         viewModelScope.launch {
             val responseState: Resource<Unit> = repository.logout()
             when (responseState){
-                is Resource.Error.AccessDenied -> {_uiState.value = SettingsScreenState.Error(message = "Couldn't fetch detail. Try again.")}
+                is Resource.Error.AccessDenied -> {_uiState.value =SettingsScreenState.Logout}
                 is Resource.Error.ClientError -> {_uiState.value = SettingsScreenState.Error(message = "Something went wrong. Please try again")}
                 is Resource.Error.NetworkError -> {_uiState.value = SettingsScreenState.Error(message = "Something went wrong. Check your internet")}
                 is Resource.Error.ServerError -> {_uiState.value = SettingsScreenState.Error(message = "Something went wrong. Try again")}
@@ -66,13 +69,26 @@ class SettingsViewModel(private val repository: SettingsRepository,
     fun changePassword(oldPassword:String, newPassword:String){
         _uiState.value = SettingsScreenState.Loading
         viewModelScope.launch {
-            val responseState: Resource<Unit> = repository.logout()
+            val responseState = repository.passwordChange(oldPassword,newPassword)
             when (responseState){
-                is Resource.Error.AccessDenied -> {_uiState.value = SettingsScreenState.Error(message = "Couldn't fetch detail. Try again.")}
-                is Resource.Error.ClientError -> {_uiState.value = SettingsScreenState.Error(message = "Something went wrong. Please try again")}
-                is Resource.Error.NetworkError -> {_uiState.value = SettingsScreenState.Error(message = "Something went wrong. Check your internet")}
-                is Resource.Error.ServerError -> {_uiState.value = SettingsScreenState.Error(message = "Something went wrong. Try again")}
-                is Resource.Success -> {
+                PasswordChangeResponseState.Error.AccessDenied -> {
+                    _uiState.value = SettingsScreenState.Error("Password change failed ")
+                    delay(1000)
+                    _uiState.value = SettingsScreenState.Logout}
+                PasswordChangeResponseState.Error.ServerError,
+                PasswordChangeResponseState.Error.ClientError -> {
+                    _uiState.value = SettingsScreenState.Error(message = "Something went wrong. Please try again")
+                }
+                PasswordChangeResponseState.Error.IncorrectPassword -> {
+                    _uiState.value = SettingsScreenState.Error("Incorrect password. Try again or log out and reset.")
+                }
+                PasswordChangeResponseState.Error.NetworkError -> {
+                    SettingsScreenState.Error(message = "Something went wrong. Check your internet")
+                }
+
+                PasswordChangeResponseState.Success -> {
+                    _uiState.value = SettingsScreenState.Success
+                    delay(400)
                     _uiState.value = SettingsScreenState.Logout
                 }
             }

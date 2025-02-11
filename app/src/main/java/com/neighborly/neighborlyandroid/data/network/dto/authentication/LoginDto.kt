@@ -1,33 +1,45 @@
 package com.neighborly.neighborlyandroid.data.network.dto.authentication
 
-import com.neighborly.neighborlyandroid.data.network.dto.ResponseErrorDetails
+import com.google.gson.annotations.SerializedName
+import com.neighborly.neighborlyandroid.data.network.dto.market.MarketItemResponse
+import com.neighborly.neighborlyandroid.domain.model.MarketItem
 import com.neighborly.neighborlyandroid.domain.model.User
+import com.neighborly.neighborlyandroid.domain.model.UserStatus
 
 data class LoginRequest(
     val email: String,
     val password: String
 )
 
-sealed class LoginApiResponse {
-    data class Success(
-        val Token: String,
-        val user: User
-    )
-    data class Error(
-        val type:String,
-        val errors:List<ResponseErrorDetails>,
+data class LoginResponse (
+   @SerializedName("Token") val token: String,
+   @SerializedName("is_address_verified") val isAddressVerified:Boolean
+)
+fun LoginResponse.toUserStatus(): UserStatus =
+    UserStatus(
+        isAddressVerified=isAddressVerified
     )
 
-}
 data class PasswordResetRequest(
     val email:String
 )
+data class ValidateAuthTokenResponse(
+    @SerializedName("is_address_verified") val isAddressVerified: Boolean
+)
 
-sealed class PasswordResetApiResponse {
-    data object Success
-    data class Error(
-        val type:String,
-        val errors:List<ResponseErrorDetails>,
+fun ValidateAuthTokenResponse.toUserStatus():UserStatus =
+    UserStatus(
+        isAddressVerified = isAddressVerified
     )
 
-}
+fun MarketItemResponse.toMarketItem(): MarketItem =
+    MarketItem(
+        id = id,
+        title = title,
+        ownerName = ownerName,
+        dayCharge = dayCharge,
+        category = category,
+        thumbnailUrl = thumbnailUrl,
+        distance = distance,
+    )
+

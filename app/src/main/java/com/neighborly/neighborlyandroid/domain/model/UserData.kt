@@ -4,7 +4,7 @@ package com.neighborly.neighborlyandroid.domain.model
 
 
 data class User(
-    val full_name: String,
+    val fullName: String,
     val email: String,
     val house: House
 )
@@ -15,6 +15,11 @@ data class House(
     val street: String,
     val apartment_number: String = ""
 )
+
+data class UserStatus(
+    val isAddressVerified:Boolean
+)
+
 
 
 

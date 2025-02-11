@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavBackStackEntry
@@ -45,6 +46,7 @@ class MahalaAppState(
     private val _snackbarHostState = SnackbarHostState()
     val snackbarHostState: SnackbarHostState get() = _snackbarHostState
     private val previousDestination = mutableStateOf<NavDestination?>(null)
+
 
 
     val currentTopLevelDestination: TopLevelDestination?

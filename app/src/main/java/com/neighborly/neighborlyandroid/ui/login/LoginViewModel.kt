@@ -11,8 +11,8 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.neighborly.neighborlyandroid.BaseApplication
 
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import com.neighborly.neighborlyandroid.common.LoginResponseState
 import com.neighborly.neighborlyandroid.common.Resource
+import com.neighborly.neighborlyandroid.domain.model.UserStatus
 import com.neighborly.neighborlyandroid.domain.repository.LoginRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -59,8 +59,14 @@ class LoginViewModel(private val loginRepository: LoginRepository,
                     _uiState.value = LoginScreenState.Error(message = "Check your intenrnet connection")
                 }
                 is Resource.Success -> {
-                    _uiState.value = LoginScreenState.Success
+                    val isVerifiedAddress:Boolean = apiResponse.data!!.isAddressVerified
+                    if (isVerifiedAddress){
+                        _uiState.value = LoginScreenState.AddressVerified
+                    }else{
+                     _uiState.value = LoginScreenState.AddressNotVerified
+                    }
                 }
+
                 else -> {
                     _uiState.value = LoginScreenState.Idle
                 }
@@ -71,13 +77,20 @@ class LoginViewModel(private val loginRepository: LoginRepository,
         if (!(email.isEmpty() || password.isEmpty())){
             _uiState.value = LoginScreenState.Loading
             viewModelScope.launch{
-                val apiResponseState: LoginResponseState = loginRepository.login(email.trim().lowercase(),password)
-                when(apiResponseState){
-                    LoginResponseState.Error.AccessDenied -> {_uiState.value = LoginScreenState.Error("Invalid Credentials")}
-                    LoginResponseState.Error.ClientError -> {_uiState.value = LoginScreenState.Error("Something went wrong. Try again")}
-                    LoginResponseState.Error.NetworkError -> {_uiState.value = LoginScreenState.Error("Check your Internet Connection")}
-                    LoginResponseState.Error.ServerError -> {_uiState.value = LoginScreenState.Error("Something went wrong. Try again")}
-                    LoginResponseState.Success -> {_uiState.value = LoginScreenState.Success}
+                val apiResponse: Resource<UserStatus> = loginRepository.login(email.trim().lowercase(),password)
+                when(apiResponse){
+                    is Resource.Error.AccessDenied ->{_uiState.value = LoginScreenState.Error("Invalid Credentials")}
+                    is Resource.Error.NetworkError -> {_uiState.value = LoginScreenState.Error("Check your Internet Connection")}
+                    is Resource.Error.ClientError,
+                    is Resource.Error.ServerError -> {_uiState.value = LoginScreenState.Error("Something went wrong. Try again")}
+                    is Resource.Success -> {
+                            val isVerifiedAddress:Boolean = apiResponse.data!!.isAddressVerified
+                            if (isVerifiedAddress){
+                                _uiState.value = LoginScreenState.AddressVerified
+                            }else{
+                                _uiState.value = LoginScreenState.AddressNotVerified
+                            }
+                    }
                 }
             }
         }else{

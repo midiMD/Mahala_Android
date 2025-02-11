@@ -31,16 +31,7 @@ sealed class ResetPasswordResponseState{
     }
 }
 
-sealed class LoginResponseState{
-    data object Success: LoginResponseState()
-    sealed class Error: LoginResponseState(){
-        data object AccessDenied: Error()
-        data object ServerError: Error() // error on server side
-        data object ClientError: Error() // error on client side
-        data object NetworkError: Error() // e.g. internet buggin
-    }
 
-}
 sealed class RegisterResponseState{
     data object Success: RegisterResponseState()
     sealed class Error: RegisterResponseState(){

@@ -43,6 +43,7 @@ import com.neighborly.neighborlyandroid.ui.inventory.add.AddInventoryViewModel
 import com.neighborly.neighborlyandroid.ui.inventory.view.ViewInventoryScreen
 import com.neighborly.neighborlyandroid.ui.inventory.view.ViewInventoryViewModel
 import com.neighborly.neighborlyandroid.ui.login.LoginViewModel
+import com.neighborly.neighborlyandroid.ui.login.UnverifiedAddressScreen
 import com.neighborly.neighborlyandroid.ui.login.reset.PasswordResetScreen
 import com.neighborly.neighborlyandroid.ui.login.reset.PasswordResetViewModel
 import com.neighborly.neighborlyandroid.ui.market.MarketViewModel
@@ -50,7 +51,7 @@ import com.neighborly.neighborlyandroid.ui.settings.SettingsHomeScreen
 import com.neighborly.neighborlyandroid.ui.settings.SettingsViewModel
 import kotlin.reflect.KClass
 import kotlinx.serialization.Serializable
-
+@Serializable data object UnverifiedAddressRoute
 @Serializable data object LoginRoute
 @Serializable data object RegisterRoute
 @Serializable data object ResetPasswordRoute
@@ -67,10 +68,10 @@ import kotlinx.serialization.Serializable
 @Serializable data object PasswordChangeRoute
 
 
+
 @Composable
 fun MahalaNavHost(appState: MahalaAppState){
     val navController = appState.navController
-
     NavHost(
         navController = navController,
         startDestination = LoginRoute
@@ -89,7 +90,7 @@ fun MahalaNavHost(appState: MahalaAppState){
                 onNavigateToRegister = {navController.navigate(RegisterRoute)},
                 navigateToMarket = {appState.navigateToTopLevelDestination(TopLevelDestination.MARKET)},
                 viewModel = viewModel(factory = LoginViewModel.Factory),
-                onNavigateToResetPassword = {navController.navigate(ResetPasswordRoute)}
+                onNavigateToResetPassword = {navController.navigate(ResetPasswordRoute) }
             )
         }
         composable<ResetPasswordRoute>{
