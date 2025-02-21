@@ -12,43 +12,39 @@ The ladder you're looking for may just be 2 doors down.
 
 ### Features
 #### Inventory
-![[images/Inventory.png|250]]
+<img src="images/Inventory.png" alt="Alt Text" width="250"/>
 
-Add the items you're willing to lend, for free or a price. Only your **nearby** neighbors will be able to see them. 
+Add the items you're willing to lend, for free or a price. Only your **nearby** neighbors will be able to see them i.e. within a certain radius(TBD) of your address. 
 
 
 ### Login/Registration
-![[Pasted image 20250113061639.png|250]] ![[Login_Reg.gif|250]]
+<img src="images/Login_Reg.gif" alt="Alt Text" width="250"/>
+
 
 Every user must register with their **home address** and have it **verified** before they can access the content. This is crucial to ensure that everyone can only see their "neighbours" and no other users.
+
 Currently, home address verification has not been implemented.
-**Potential solutions include**:
+
+The planned first solution is for the user to submit a video of themselves and a live video of an eligible Proof of Address document. These will be verified by a staff member.
+
+**Potential future solutions**:
+
 * Decentralised, community verification: A random subset of verified users in the area is selected to verify a new user's Proof of Address. If there aren't enough verified users in the area, then perhaps a larger group could be selected from anywhere in the same country. A high consensus threshold must be reached to successfully register a new user.
-* Explore methods used by government entities to verify address using Proof of Address documents.
-* Multiple sources of evidence required e.g. call + Proof of Address document
-#### Progress
-* UI and backend for Login and Registration
-#### To Do:
-* **Should**: Federated registration (Sign-in with Google)
-* **Must**:  Home Address verification (see above)
-* **Must**: Forgot Password 
-* **Must**: Email Address verification
+
 ### Market
-![[Market.gif|250]]
-See if your neighbors
-#### Progress
-* UI prototype is largely complete
-* Integration with backend and S3 image storage 
-#### To Do
-* **Must**: Search logic on the backend. Currently it retrieves all items within a 1000 miles X|
-* **Should** : Implement Category Filtering on the backend
-* **Should**: Sort By
-* **Should**: Visual Design and Layout improvements
-* **Maybe** "Nearby" criteria improvements
+<img src="images/Market.gif" alt="Alt Text" width="250"/>
+
+
+See if your neighbors have what you need.
+
+Chat with the owner in the integrated Mahala Chat.
+
 ### Chat
-![[Chat.gif|250]]
+<img src="images/Chat.gif" alt="Alt Text" width="250"/>
+
 Chat in app then *take it outside*
 
+### Settings
 
 ## 🚀 Roadmap
 
@@ -96,16 +92,3 @@ When there aren't countless bureoucratic hoops to go through, works gets done qu
 For matters like:
 * Voting on, raising funds and resources for a local project like a public facility, volunteering work, cleaning, tree etc
 
-
-
-
- 
-
-The ladder you're looking for may just be 2 doors down. 
-An app to facilitate the sharing/lending of items between **nearby** neighbours. 
-
-
-
-
-# Architecture
-![[Pasted image 20250113075830.png]]
