@@ -13,12 +13,12 @@ import com.neighborly.neighborlyandroid.R
 import com.neighborly.neighborlyandroid.data.mock.listOfMessages
 import com.neighborly.neighborlyandroid.domain.model.Message
 import com.neighborly.neighborlyandroid.domain.repository.ChatRepository
-import com.neighborly.neighborlyandroid.ui.navigation.ConvoRoute
+import com.neighborly.neighborlyandroid.ui.navigation.ChatRoomRoute
 
 class ConvoViewModel(private val chatRepository: ChatRepository,
                      private val savedStateHandle: SavedStateHandle
 ) : ViewModel()  {
-    val convoId = savedStateHandle.toRoute<ConvoRoute>().convoId
+    val convoId = savedStateHandle.toRoute<ChatRoomRoute>().roomId
     var senderProfilePicture: Int
         get() = savedStateHandle["senderProfileImage"] ?: R.drawable.ic_broken_img
         set(value) {

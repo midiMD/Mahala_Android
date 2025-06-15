@@ -43,7 +43,6 @@ import com.neighborly.neighborlyandroid.ui.inventory.add.AddInventoryViewModel
 import com.neighborly.neighborlyandroid.ui.inventory.view.ViewInventoryScreen
 import com.neighborly.neighborlyandroid.ui.inventory.view.ViewInventoryViewModel
 import com.neighborly.neighborlyandroid.ui.login.LoginViewModel
-import com.neighborly.neighborlyandroid.ui.login.UnverifiedAddressScreen
 import com.neighborly.neighborlyandroid.ui.login.reset.PasswordResetScreen
 import com.neighborly.neighborlyandroid.ui.login.reset.PasswordResetViewModel
 import com.neighborly.neighborlyandroid.ui.market.MarketViewModel
@@ -57,7 +56,7 @@ import kotlinx.serialization.Serializable
 @Serializable data object ResetPasswordRoute
 @Serializable data object MarketRoute
 @Serializable data object ChatBaseRoute
-@Serializable data class ConvoRoute(val convoId:Long)
+@Serializable data class ChatRoomRoute(val roomId:Long)
 @Serializable data object ChatHomeRoute
 @Serializable data object InventoryBaseRoute
 @Serializable data object InventoryHomeRoute
@@ -115,7 +114,7 @@ fun MahalaNavHost(appState: MahalaAppState){
                     viewModel = viewModel
                 )
             }
-            composable<ConvoRoute>{ backStackEntry ->
+            composable<ChatRoomRoute>{ backStackEntry ->
                 val parentEntry = remember(backStackEntry) {
                     navController.getBackStackEntry(ChatBaseRoute)
                 }
@@ -192,7 +191,7 @@ fun NavController.navigateToMarket(navOptions: NavOptions) = navigate(route = Ma
 fun NavController.navigateToInventoryHome(navOptions: NavOptions) = navigate(route = InventoryHomeRoute, navOptions)
 fun NavController.navigateToChatHome(navOptions: NavOptions) = navigate(route = ChatHomeRoute, navOptions)
 fun NavController.navigateToConvo(convoId: Long, navOptions: NavOptionsBuilder.() -> Unit = {}) {
-    navigate(route = ConvoRoute(convoId)) {
+    navigate(route = ChatRoomRoute(convoId)) {
         navOptions()
     }
 }

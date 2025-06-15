@@ -3,7 +3,8 @@ package com.neighborly.neighborlyandroid.common.composition
 import com.neighborly.neighborlyandroid.data.datastore.TokenDataStore
 import com.neighborly.neighborlyandroid.data.datastore.TokenDataStoreImpl
 import android.content.Context
-import com.neighborly.neighborlyandroid.data.network.retrofit.ChatApi
+import com.neighborly.neighborlyandroid.data.network.retrofit.ChatService
+import com.neighborly.neighborlyandroid.data.network.retrofit.ChatServiceImpl
 import com.neighborly.neighborlyandroid.data.network.retrofit.InventoryApi
 import com.neighborly.neighborlyandroid.data.network.retrofit.InventoryService
 
@@ -47,7 +48,7 @@ class AppCompositionRoot(applicationContext:Context) {
     // Inventory
     public val inventoryRepository: InventoryRepository get() = InventoryRepositoryImpl(inventoryService = inventoryService)
     //Chat
-    public val chatService: ChatApi = MockChatService()
+    public val chatService: ChatService = ChatServiceImpl()
     public val chatRepository: ChatRepository get() = ChatRepositoryImpl(chatService = chatService)
 
     // Settings

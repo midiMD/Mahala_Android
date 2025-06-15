@@ -1,11 +1,16 @@
 package com.neighborly.neighborlyandroid.data.network.retrofit
 
 
-import com.neighborly.neighborlyandroid.data.network.dto.chat.ConvoResponse
 import com.neighborly.neighborlyandroid.data.network.dto.chat.MessageResponse
-import retrofit2.Response
+import com.neighborly.neighborlyandroid.data.network.dto.chat.RoomResponse
 
-interface ChatApi {
-    suspend fun getChats(): Response<List<ConvoResponse>>
-    suspend fun getMessages(chatId:Long, howFarBack:Int):Response<List<MessageResponse>>
+// ChatService interface
+interface ChatService {
+    suspend fun authenticate(authToken:String):List<RoomResponse>
+    suspend fun connect()
+    suspend fun disconnect()
+    fun isConnected(): Boolean
+    suspend fun sendMessage(roomId:Long,message:String)
+    suspend fun getAllRooms():List<RoomResponse>
+    suspend fun getMessages(roomId:Long):List<MessageResponse>
 }

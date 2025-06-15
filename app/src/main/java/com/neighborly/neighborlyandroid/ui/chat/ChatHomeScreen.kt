@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.neighborly.neighborlyandroid.data.mock.listOfConversations
+import com.neighborly.neighborlyandroid.domain.model.Conversation
 import com.neighborly.neighborlyandroid.ui.chat.components.ConversationItem
 import com.neighborly.neighborlyandroid.ui.chat.components.HomeAppBar
 
@@ -26,6 +27,8 @@ import com.neighborly.neighborlyandroid.ui.chat.components.HomeAppBar
 fun ChatHomeScreen(onConvoClick:(convoId:Long)->Unit,
                    viewModel: ChatViewModel
 ) {
+    val listOfConversations:List<Conversation> by viewModel.listOfConversations.collectAsState()
+
     Scaffold(
         topBar = {
             HomeAppBar(newMessageCount =viewModel.newMessageCount )
@@ -43,7 +46,7 @@ fun ChatHomeScreen(onConvoClick:(convoId:Long)->Unit,
                 ConversationItem(
                     conversation = conversation,
                     onClick = {
-                        viewModel.saveSenderImage(conversation.image)
+
                         onConvoClick(conversation.id)
                     }
                 )
