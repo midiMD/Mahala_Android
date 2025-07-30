@@ -4,10 +4,8 @@ import android.util.Log
 import coil3.network.HttpException
 import com.neighborly.neighborlyandroid.common.PasswordChangeResponseState
 import com.neighborly.neighborlyandroid.common.Resource
-import com.neighborly.neighborlyandroid.data.network.dto.inventory.toInventoryItem
 import com.neighborly.neighborlyandroid.data.network.dto.settings.PasswordChangeRequest
 import com.neighborly.neighborlyandroid.data.network.retrofit.SettingsService
-import com.neighborly.neighborlyandroid.domain.model.InventoryItem
 import com.neighborly.neighborlyandroid.domain.repository.SettingsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

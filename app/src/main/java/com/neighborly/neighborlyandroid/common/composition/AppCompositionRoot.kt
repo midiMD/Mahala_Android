@@ -5,13 +5,10 @@ import com.neighborly.neighborlyandroid.data.datastore.TokenDataStoreImpl
 import android.content.Context
 import com.neighborly.neighborlyandroid.data.network.retrofit.ChatService
 import com.neighborly.neighborlyandroid.data.network.retrofit.ChatServiceImpl
-import com.neighborly.neighborlyandroid.data.network.retrofit.InventoryApi
 import com.neighborly.neighborlyandroid.data.network.retrofit.InventoryService
 
 import com.neighborly.neighborlyandroid.data.network.retrofit.LoginService
 import com.neighborly.neighborlyandroid.data.network.retrofit.MarketService
-import com.neighborly.neighborlyandroid.data.network.retrofit.MockChatService
-import com.neighborly.neighborlyandroid.data.network.retrofit.SettingsApi
 import com.neighborly.neighborlyandroid.data.network.retrofit.SettingsService
 
 import com.neighborly.neighborlyandroid.data.network.retrofit.UserService
@@ -49,7 +46,7 @@ class AppCompositionRoot(applicationContext:Context) {
     public val inventoryRepository: InventoryRepository get() = InventoryRepositoryImpl(inventoryService = inventoryService)
     //Chat
     public val chatService: ChatService = ChatServiceImpl()
-    public val chatRepository: ChatRepository get() = ChatRepositoryImpl(chatService = chatService)
+    public val chatRepository: ChatRepository get() = ChatRepositoryImpl(socketService = chatService)
 
     // Settings
     public val settingsService: SettingsService = SettingsService(tokenDataStore = tokenStore)

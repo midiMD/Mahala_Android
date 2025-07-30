@@ -2,7 +2,6 @@ package com.neighborly.neighborlyandroid.ui.inventory.add
 
 import android.content.Context
 import android.util.Log
-import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -16,8 +15,6 @@ import androidx.lifecycle.viewModelScope
 import com.neighborly.neighborlyandroid.common.Resource
 import com.neighborly.neighborlyandroid.domain.model.AddItemDetails
 import com.neighborly.neighborlyandroid.domain.repository.InventoryRepository
-import com.neighborly.neighborlyandroid.ui.market.MarketScreenState
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch

@@ -3,8 +3,6 @@ package com.neighborly.neighborlyandroid.ui.chat
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -22,6 +20,7 @@ import com.neighborly.neighborlyandroid.ui.login.LoginScreenState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 sealed class ChatHomeScreenState{
     data object Idle : ChatHomeScreenState()
@@ -46,6 +45,10 @@ class ChatViewModel(private val chatRepository: ChatRepository,
     //private set
 
     init {
+        runBlocking {
+            chatRepository.connect()
+        }
+
         Log.d("logs", "ChatViewModel instantiated")
     }
     companion object {
@@ -61,7 +64,7 @@ class ChatViewModel(private val chatRepository: ChatRepository,
             }
         }
     }
-    fun getListOfConversations(){
+    fun getListOfRooms(){
         _uiState.value = ChatHomeScreenState.Loading
         viewModelScope.launch{
             val apiResponse = chatRepository.getListOfRooms()

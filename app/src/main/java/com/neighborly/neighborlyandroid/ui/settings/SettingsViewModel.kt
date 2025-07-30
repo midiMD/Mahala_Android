@@ -11,12 +11,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.neighborly.neighborlyandroid.BaseApplication
 import com.neighborly.neighborlyandroid.common.PasswordChangeResponseState
 import com.neighborly.neighborlyandroid.common.Resource
-import com.neighborly.neighborlyandroid.domain.model.InventoryItemDetail
-import com.neighborly.neighborlyandroid.domain.repository.InventoryRepository
 import com.neighborly.neighborlyandroid.domain.repository.SettingsRepository
-import com.neighborly.neighborlyandroid.ui.inventory.view.InventoryItemDetailScreenState
-import com.neighborly.neighborlyandroid.ui.inventory.view.ViewInventoryScreenState
-import com.neighborly.neighborlyandroid.ui.inventory.view.ViewInventoryViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

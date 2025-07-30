@@ -14,10 +14,7 @@ import androidx.lifecycle.viewModelScope
 import com.neighborly.neighborlyandroid.common.Resource
 import com.neighborly.neighborlyandroid.domain.model.InventoryItem
 import com.neighborly.neighborlyandroid.domain.model.InventoryItemDetail
-import com.neighborly.neighborlyandroid.domain.model.MarketItem
-import com.neighborly.neighborlyandroid.domain.model.MarketItemDetail
 import com.neighborly.neighborlyandroid.domain.repository.InventoryRepository
-import com.neighborly.neighborlyandroid.ui.market.MarketItemDetailScreenState
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow

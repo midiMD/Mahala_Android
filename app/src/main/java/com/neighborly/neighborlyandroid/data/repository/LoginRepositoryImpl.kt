@@ -11,7 +11,6 @@ import com.neighborly.neighborlyandroid.data.network.dto.authentication.LoginReq
 import com.neighborly.neighborlyandroid.data.network.dto.authentication.PasswordResetRequest
 import com.neighborly.neighborlyandroid.data.network.dto.authentication.toUserStatus
 import com.neighborly.neighborlyandroid.data.network.retrofit.LoginService
-import com.neighborly.neighborlyandroid.domain.model.User
 import com.neighborly.neighborlyandroid.domain.model.UserStatus
 import com.neighborly.neighborlyandroid.domain.repository.LoginRepository
 import kotlinx.coroutines.Dispatchers

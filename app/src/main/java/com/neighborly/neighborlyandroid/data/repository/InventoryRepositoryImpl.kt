@@ -59,28 +59,43 @@ class InventoryRepositoryImpl(private val inventoryService: InventoryService):In
         withContext(Dispatchers.IO) {
             //Network and local storage IO operations should be done in IO Context
             try {
-                val response =
-                    inventoryService.requestItems()
-
+//                val response =
+//                    inventoryService.requestItems()
+//
+//                if (response.isSuccessful) {
+//                    val items:List<InventoryItem> = response.body()!!.map { item -> item.toInventoryItem() }
+//                    Log.i("logs","Inventory items request success : $items")
+//                    Resource.Success(items)
+//                } else if (response.code() == 500) {
+//                    //internal server error
+//                    Resource.Error.ServerError()
+//                } else if (response.code() == 401 || response.code() == 403) { // unauthorized or forbidden
+//                    Resource.Error.AccessDenied()
+//                } else {
+//                    Resource.Error.ServerError()
+//                }
+                val response = inventoryService.requestItems()
                 if (response.isSuccessful) {
-                    val items:List<InventoryItem> = response.body()!!.map { item -> item.toInventoryItem() }
-                    Log.i("logs","Inventory items request success : $items")
-                    Resource.Success(items)
-                } else if (response.code() == 500) {
-                    //internal server error
-                    Resource.Error.ServerError()
-                } else if (response.code() == 401 || response.code() == 403) { // unauthorized or forbidden
-                    Resource.Error.AccessDenied()
+                    response.body()!!
+                        .map { it.toInventoryItem() }
+                        .also { Log.i("logs", "Inventory items request success: $it") }
+                        .let { Resource.Success(it) }
                 } else {
-                    Resource.Error.ServerError()
+                    when (response.code()) {
+                        401, 403 -> Resource.Error.AccessDenied()
+                        500 -> Resource.Error.ServerError()
+                        else -> Resource.Error.ServerError()
+                    }
                 }
-            } catch (e: HttpException) {
-                Resource.Error.ClientError<List<InventoryItem>>()
-            } catch (e: IOException) {
-                Resource.Error.NetworkError<List<InventoryItem>>()
-            } catch (e:Exception) {
-                Log.e("logs",e.toString())
-                Resource.Error.ServerError()
+            } catch (e: Exception) {
+                when (e) {
+                    is HttpException -> Resource.Error.ClientError()
+                    is IOException -> Resource.Error.NetworkError()
+                    else -> {
+                        Log.e("logs", e.toString())
+                        Resource.Error.ServerError()
+                    }
+                }
             }
         }
 
